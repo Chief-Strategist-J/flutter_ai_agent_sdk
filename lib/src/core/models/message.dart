@@ -18,7 +18,6 @@ enum MessageType {
 
 @JsonSerializable()
 class Message {
-  
   Message({
     required this.id,
     required this.role,
@@ -29,8 +28,9 @@ class Message {
     this.toolCalls,
     this.audioUrl,
   }) : timestamp = timestamp ?? DateTime.now();
-  
-  factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
+
+  factory Message.fromJson(Map<String, dynamic> json) =>
+      _$MessageFromJson(json);
   final String id;
   final MessageRole role;
   final MessageType type;
@@ -40,7 +40,7 @@ class Message {
   final List<ToolCall>? toolCalls;
   final String? audioUrl;
   Map<String, dynamic> toJson() => _$MessageToJson(this);
-  
+
   Message copyWith({
     final String? id,
     final MessageRole? role,
@@ -50,28 +50,29 @@ class Message {
     final DateTime? timestamp,
     final List<ToolCall>? toolCalls,
     final String? audioUrl,
-  }) => Message(
-      id: id ?? this.id,
-      role: role ?? this.role,
-      type: type ?? this.type,
-      content: content ?? this.content,
-      metadata: metadata ?? this.metadata,
-      timestamp: timestamp ?? this.timestamp,
-      toolCalls: toolCalls ?? this.toolCalls,
-      audioUrl: audioUrl ?? this.audioUrl,
-    );
+  }) =>
+      Message(
+        id: id ?? this.id,
+        role: role ?? this.role,
+        type: type ?? this.type,
+        content: content ?? this.content,
+        metadata: metadata ?? this.metadata,
+        timestamp: timestamp ?? this.timestamp,
+        toolCalls: toolCalls ?? this.toolCalls,
+        audioUrl: audioUrl ?? this.audioUrl,
+      );
 }
 
 @JsonSerializable()
 class ToolCall {
-  
   ToolCall({
     required this.id,
     required this.name,
     required this.arguments,
   });
-  
-  factory ToolCall.fromJson(Map<String, dynamic> json) => _$ToolCallFromJson(json);
+
+  factory ToolCall.fromJson(Map<String, dynamic> json) =>
+      _$ToolCallFromJson(json);
   final String id;
   final String name;
   final Map<String, dynamic> arguments;

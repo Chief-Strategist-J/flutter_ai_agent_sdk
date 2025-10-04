@@ -7,7 +7,6 @@ enum SessionState {
 }
 
 class SessionStatus {
-  
   const SessionStatus({
     required this.state,
     this.errorMessage,
@@ -16,8 +15,9 @@ class SessionStatus {
   final SessionState state;
   final String? errorMessage;
   final Map<String, dynamic>? metadata;
-  
-  bool get isActive => state != SessionState.idle && state != SessionState.error;
+
+  bool get isActive =>
+      state != SessionState.idle && state != SessionState.error;
   bool get isListening => state == SessionState.listening;
   bool get isProcessing => state == SessionState.processing;
   bool get isSpeaking => state == SessionState.speaking;

@@ -6,7 +6,7 @@ abstract class TextToSpeechService {
   Future<void> stop();
   Future<void> dispose();
   bool get isSpeaking;
-  
+
   Future<void> setVoice(final String voiceId);
   Future<void> setRate(final double rate);
   Future<void> setPitch(final double pitch);

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:typed_data';
 
 class VADResult {
-  
   VADResult({
     required this.isSpeech,
     required this.confidence,

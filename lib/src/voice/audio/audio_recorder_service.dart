@@ -8,7 +8,7 @@ abstract class AudioRecorderService {
   Future<void> pauseRecording();
   Future<void> resumeRecording();
   Future<void> dispose();
-  
+
   Stream<Uint8List> get audioStream;
   Stream<RecorderState> get stateStream;
   bool get isRecording;

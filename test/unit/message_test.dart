@@ -10,14 +10,14 @@ void main() {
         type: MessageType.text,
         content: 'Test message',
       );
-      
+
       expect(message.id, 'test-id');
       expect(message.role, MessageRole.user);
       expect(message.type, MessageType.text);
       expect(message.content, 'Test message');
       expect(message.timestamp, isNotNull);
     });
-    
+
     test('should support copyWith', () {
       final Message message = Message(
         id: 'test-id',
@@ -25,14 +25,14 @@ void main() {
         type: MessageType.text,
         content: 'Test message',
       );
-      
+
       final Message copied = message.copyWith(content: 'Updated message');
-      
+
       expect(copied.id, 'test-id');
       expect(copied.content, 'Updated message');
     });
   });
-  
+
   group('ToolCall', () {
     test('should have all required fields', () {
       final ToolCall toolCall = ToolCall(
@@ -40,7 +40,7 @@ void main() {
         name: 'test_tool',
         arguments: <String, dynamic>{'param': 'value'},
       );
-      
+
       expect(toolCall.id, 'tool-id');
       expect(toolCall.name, 'test_tool');
       expect(toolCall.arguments, <String, String>{'param': 'value'});

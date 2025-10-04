@@ -8,7 +8,7 @@ abstract class AudioPlayerService {
   Future<void> pause();
   Future<void> resume();
   Future<void> dispose();
-  
+
   Stream<PlayerState> get stateStream;
   bool get isPlaying;
 }
