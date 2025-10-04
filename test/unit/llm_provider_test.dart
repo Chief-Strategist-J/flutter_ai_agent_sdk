@@ -197,8 +197,10 @@ void main() {
 
         // Assert
         expect(response1, isNot(equals(response2))); // Different instances
-        expect(response1.toolCalls,
-            equals(response2.toolCalls),); // Same tool calls
+        expect(
+          response1.toolCalls,
+          equals(response2.toolCalls),
+        ); // Same tool calls
       });
 
       test('should_beEqual_when_sameMetadata', () {
@@ -329,9 +331,13 @@ void main() {
         // Assert
         expect(response.toolCalls, equals(complexToolCalls));
         expect(
-            response.toolCalls![0].arguments['array'], equals(<int>[1, 2, 3]),);
-        expect(response.toolCalls![0].arguments['object'],
-            equals(<String, String>{'nested': 'value'}),);
+          response.toolCalls![0].arguments['array'],
+          equals(<int>[1, 2, 3]),
+        );
+        expect(
+          response.toolCalls![0].arguments['object'],
+          equals(<String, String>{'nested': 'value'}),
+        );
       });
 
       test('should_handleLargeMetadata_when_provided', () {
@@ -389,7 +395,8 @@ void main() {
         final LLMResponse response = LLMResponse(
           content: 'text',
           toolCalls: <ToolCall>[
-            ToolCall(id: 'call-1', name: 'tool', arguments: <String, dynamic>{}),
+            ToolCall(
+                id: 'call-1', name: 'tool', arguments: <String, dynamic>{},),
           ],
           metadata: <String, dynamic>{'key': 'value'},
         );
@@ -423,7 +430,9 @@ void main() {
         expect(response.toolCalls![0].arguments['number'], equals(42));
         expect(response.toolCalls![0].arguments['boolean'], isTrue);
         expect(
-            response.toolCalls![0].arguments['list'], equals(<int>[1, 2, 3]),);
+          response.toolCalls![0].arguments['list'],
+          equals(<int>[1, 2, 3]),
+        );
       });
     });
 
@@ -445,8 +454,10 @@ void main() {
 
         // Act & Assert
         expect(response1, isNot(equals(response2))); // Different instances
-        expect(response1.hashCode,
-            isNot(equals(response2.hashCode)),); // Different hash codes
+        expect(
+          response1.hashCode,
+          isNot(equals(response2.hashCode)),
+        ); // Different hash codes
       });
 
       test('should_haveDifferentHashCode_when_notEqual', () {
@@ -503,9 +514,10 @@ void main() {
         };
         final List<ToolCall> originalToolCalls = <ToolCall>[
           ToolCall(
-              id: 'call-1',
-              name: 'tool',
-              arguments: <String, dynamic>{'test': 'value'},),
+            id: 'call-1',
+            name: 'tool',
+            arguments: <String, dynamic>{'test': 'value'},
+          ),
         ];
 
         // Act
