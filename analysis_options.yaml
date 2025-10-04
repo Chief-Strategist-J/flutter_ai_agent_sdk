@@ -1,8 +1,14 @@
+# MAXIMUM STRICTNESS Analysis Options for Flutter AI Agent SDK
+# ABSOLUTE ZERO-TOLERANCE POLICY - NO COMPROMISES WHATSOEVER
+# ALL warnings treated as ERRORS - NO EXCEPTIONS EVER
+# PRODUCTION-GRADE CODE QUALITY ENFORCEMENT
+# EVERY SINGLE RULE ENABLED AND SET TO ERROR
+
 include: package:lints/core.yaml
 
 analyzer:
   exclude:
-    # Generated files
+    # Generated files ONLY
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "**/*.gr.dart"
@@ -15,12 +21,13 @@ analyzer:
     - "lib/generated/**"
     - "lib/**.gen.dart"
     - "lib/generated_plugin_registrant.dart"
-    # Test files
+    # Test mocks
     - "test/**.mocks.dart"
     - "**/test/generated_*.dart"
-    # Build
+    # Build artifacts
     - "build/**"
     - ".dart_tool/**"
+    - ".fvm/**"
     # Assets
     - "assets/**"
     - "bricks/**"
@@ -28,7 +35,7 @@ analyzer:
   plugins:
     - custom_lint
 
-
+  # MAXIMUM STRICTNESS language settings - ABSOLUTELY NO LENIENCY
   language:
     strict-casts: true
     strict-inference: true
@@ -39,13 +46,17 @@ analyzer:
       - records
       - macros
       - extension-types
+      - inline-class
 
+  # ABSOLUTELY NO implicit anything - EXPLICIT EVERYTHING
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
 
+  # ULTRA-STRICT ERROR CONFIGURATION
+  # ALL issues are ERRORS - NO warnings allowed
   errors:
-    # Architecture & Design
+    # Architecture & Design - CRITICAL
     implementation_imports: error
     invalid_use_of_visible_for_testing_member: error
     public_member_api_docs: error
@@ -57,10 +68,11 @@ analyzer:
     invalid_dependency: error
     missing_dependency: error
     use_string_in_part_of_directives: error
-    constant_identifier_names : error
-    non_constant_identifier_names : error
-    prefer_const_constructors : error
-    # Critical Errors
+    constant_identifier_names: error
+    non_constant_identifier_names: error
+    prefer_const_constructors: error
+    
+    # Critical Errors - ZERO TOLERANCE
     todo: error
     dead_code: error
     invalid_annotation_target: error
@@ -80,8 +92,11 @@ analyzer:
     unused_import: error
     unused_local_variable: error
     unused_shown_name: error
+    unused_result: error
+    unused_catch_clause: error
+    unused_catch_stack: error
 
-    # Type Safety
+    # Type Safety - ABSOLUTE STRICTNESS
     always_specify_types: error
     strict_raw_type: error
     invalid_assignment: error
@@ -91,8 +106,12 @@ analyzer:
     null_check_on_nullable_type_parameter: error
     nullable_type_in_catch_clause: error
     invalid_null_aware_operator: error
+    type_parameter_supertype_of_its_bound: error
+    invalid_override: error
+    invalid_override_different_default_values_named: error
+    invalid_override_different_default_values_positional: error
 
-    # Code Style & Maintainability
+    # Code Style & Maintainability - ULTRA STRICT
     avoid_annotating_with_dynamic: error
     avoid_catches_without_on_clauses: error
     avoid_catching_errors: error
@@ -136,6 +155,10 @@ analyzer:
     use_setters_to_change_properties: error
     use_string_buffers: error
     void_checks: error
+    avoid_print: error
+    avoid_dynamic_calls: error
+    close_sinks: error
+    cancel_subscriptions: error
 
     # Documentation
     missing_code_block_language_in_doc_comment: error
@@ -143,6 +166,7 @@ analyzer:
     package_prefixed_library_names: error
     slash_for_doc_comments: error
 
+    # Additional Strict Rules
     always_put_control_body_on_new_line: error
     always_specify_parameter_types: error
     avoid_as: error
@@ -183,17 +207,29 @@ analyzer:
     use_is_even_rather_than_modulo: error
     use_raw_strings: error
     valid_regexps: error
+    
+    # Flutter Specific - CRITICAL
+    use_super_parameters: error
+    sized_box_for_whitespace: error
+    sort_child_properties_last: error
+    use_colored_box: error
+    use_full_hex_values_for_flutter_colors: error
 
 
+# MAXIMUM STRICTNESS LINTER RULES - MOST AGGRESSIVE POSSIBLE
 linter:
   rules:
-    - cyclomatic_complexity: 10
-    - number_of_parameters: 4
-    - max_nesting: 4
-    - lines_of_code: 50
-    - maintainability_index: 50
-    - max_methods: 10
-    - class_weight: 0.33
+    # Metrics - ABSOLUTELY MAXIMUM STRICTNESS
+    - cyclomatic_complexity: 5
+    - number_of_parameters: 3
+    - max_nesting: 3
+    - lines_of_code: 30
+    - maintainability_index: 85
+    - max_methods: 8
+    - class_weight: 0.25
+    - max_file_length: 400
+    - max_class_length: 200
+    # Core Rules - MANDATORY
     - always_declare_return_types
     - always_put_required_named_parameters_first
     - always_specify_types
@@ -221,8 +257,9 @@ linter:
     - type_annotate_public_apis
     - unnecessary_getters_setters
     - use_setters_to_change_properties
+    - always_require_non_null_named_parameters
 
-    # Flutter specific
+    # Flutter Specific - CRITICAL
     - sized_box_for_whitespace
     - sized_box_shrink_expand
     - sort_child_properties_last
@@ -232,8 +269,12 @@ linter:
     - use_full_hex_values_for_flutter_colors
     - use_key_in_widget_constructors
     - use_super_parameters
+    - avoid_unnecessary_containers
+    - avoid_web_libraries_in_flutter
+    - no_logic_in_create_state
+    - diagnostic_describe_all_properties
 
-    # Code quality
+    # Code Quality - ULTRA COMPREHENSIVE
     - annotate_overrides
     - annotate_redeclares
     - avoid_bool_literals_in_conditional_expressions
@@ -390,10 +431,20 @@ linter:
     - secure_pubspec_urls
     - unnecessary_lambdas
     - use_to_and_as_if_applicable
+    
+    # Additional Strict Rules
+    - avoid_js_rounded_ints
+    - avoid_returning_null
+    - avoid_returning_null_for_future
+    - close_sinks
+    - flutter_style_todos
+    - noop_primitive_operations
+    - use_string_in_part_of_directives
 
+# ULTRA-STRICT CUSTOM LINT RULES
 custom_lint:
   rules:
-    # Clean Architecture enforcements
+    # Clean Architecture - MANDATORY ENFORCEMENT
     - avoid_layer_violation: true
     - avoid_data_layer_in_presentation: true
     - avoid_domain_layer_in_presentation: true
@@ -413,6 +464,8 @@ custom_lint:
     - prefer_sealed_classes: true
     - require_property_documentation: true
     - must_be_immutable: true
+    
+    # Code Quality - ZERO TOLERANCE
     - avoid_passing_async_when_sync_expected: true
     - avoid_dynamic: true
     - avoid_returning_widgets: true
@@ -428,13 +481,18 @@ custom_lint:
     - prefer-match-file-name: true
     - prefer-static-class: true
     - member-ordering-extended: true
+    
+    # Naming & Identifiers - MAXIMUM STRICT
     - prefer-correct-identifier-length:
         min-identifier-length: 3
-        max-identifier-length: 30
+        max-identifier-length: 25
     - prefer-correct-type-name:
         min-length: 3
-        max-length: 40
+        max-length: 35
     - prefer-match-file-name: true
+    - prefer-unique-entity-names: true
+    
+    # Code Patterns - MANDATORY
     - no-equal-then-else: true
     - prefer-first: true
     - prefer-last: true
@@ -443,9 +501,8 @@ custom_lint:
     - no-empty-block: true
     - no-magic-number: true
     - prefer-trailing-comma: true
-    - prefer-unique-entity-names: true
 
-    # Performance
+    # Performance - CRITICAL OPTIMIZATION
     - binary-expression-operand-order: true
     - double-literal-format: true
     - no-equal-arguments: true
@@ -456,10 +513,13 @@ custom_lint:
     - avoid-unnecessary-type-assertions: true
     - avoid-unnecessary-type-casts: true
     - prefer-extracting-callbacks: true
+    - avoid-unnecessary-conditionals: true
+    - avoid-collection-methods-with-unrelated-types: true
+    - prefer-immediate-return: true
 
-    # Style
+    # Style - ABSOLUTE PERFECT CODE FORMATTING - NO TOLERANCE
     - avoid-nested-conditional-expressions:
-        acceptable-level: 2
+        acceptable-level: 1
     - avoid-redundant-else: true
     - avoid-late-keyword: true
     - avoid-unused-parameters: true
@@ -467,8 +527,23 @@ custom_lint:
     - prefer-single-widget-per-file:
         ignore-private-widgets: true
     - prefer-moving-to-variable:
-        allowed-duplicated-chains: 3
+        allowed-duplicated-chains: 1
     - prefer-commenting-analyzer-ignores: true
     - no-empty-block: true
     - newline-before-return: true
     - prefer-immediate-return: true
+    - format-comment: true
+    - prefer-enums-by-name: true
+    - prefer-iterable-of: true
+    - prefer-declaring-const-constructor: true
+    
+    # Testing - COMPREHENSIVE COVERAGE
+    - always-remove-listener: true
+    - avoid-banned-imports: true
+    - avoid-throw-in-catch-block: true
+    - check-for-equals-in-render-object-setters: true
+    - consistent-update-render-object: true
+    - dispose-fields: true
+    - prefer-const-border-radius: true
+    - prefer-using-list-view: true
+    - use-setstate-synchronously: true

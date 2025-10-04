@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ai_agent_sdk/flutter_ai_agent_sdk.dart';
 
@@ -35,7 +37,7 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
   @override
   void initState() {
     super.initState();
-    _initializeAgent();
+    unawaited(_initializeAgent());
   }
 
   Future<void> _initializeAgent() async {
@@ -64,7 +66,7 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
             'required': <String>['location'],
           },
           function: (final Map<String, dynamic> args) async {
-            final location = args['location'];
+            final String location = args['location'] as String;
             return <String, dynamic>{
               'temperature': 72,
               'condition': 'sunny',
@@ -90,8 +92,8 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
     // Listen to messages
     _session!.messages.listen((final List<Message> messages) {
       setState(() {
-        _messages.clear();
-        _messages.addAll(messages);
+        _messages..clear()
+        ..addAll(messages);
       });
     });
   }
@@ -131,9 +133,9 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  final isUser = message.role == MessageRole.user;
+                itemBuilder: (final BuildContext context, final int index) {
+                  final Message message = _messages[index];
+                  final bool isUser = message.role == MessageRole.user;
 
                   return Align(
                     alignment:
