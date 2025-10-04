@@ -1,0 +1,316 @@
+# CodeRabbit Configuration for Flutter AI Agent SDK
+# Deep code review settings for production-quality code
+
+# Language Configuration
+language: dart
+
+# Review Settings
+reviews:
+  # Comprehensive review profile
+  profile: assertive
+  
+  # Request changes on critical issues
+  request_changes_workflow: true
+  
+  # Enable all review categories
+  auto_review:
+    enabled: true
+    drafts: true
+  
+  # Review triggers
+  trigger_on:
+    - pull_request
+    - push
+    - issue_comment
+
+# Path-based Configuration
+path_instructions:
+  - path: "lib/**/*.dart"
+    instructions: |
+      - Enforce strict null safety
+      - All public APIs must have comprehensive documentation
+      - All functions must have return type annotations
+      - Verify error handling is comprehensive
+      - Check for proper resource disposal (dispose methods, close streams)
+      - Ensure immutability where appropriate
+      - Verify no business logic in constructors
+      - Check for memory leaks (unclosed streams, listeners)
+      - Ensure all async operations are properly awaited
+      - Verify thread safety for concurrent operations
+  
+  - path: "test/**/*.dart"
+    instructions: |
+      - Ensure each test has clear arrange-act-assert structure
+      - Verify all edge cases are covered
+      - Check for proper mock usage and cleanup
+      - Ensure tests are isolated and don't depend on execution order
+      - Verify async tests properly await operations
+      - Check for test naming conventions (should describe behavior)
+      - Ensure comprehensive coverage of error scenarios
+  
+  - path: "lib/src/core/**/*.dart"
+    instructions: |
+      - Verify single responsibility principle
+      - Check for proper dependency injection
+      - Ensure no hardcoded values
+      - Verify proper use of abstract classes and interfaces
+      - Check for separation of concerns
+  
+  - path: "lib/src/llm/**/*.dart"
+    instructions: |
+      - Verify API key handling is secure
+      - Check for proper rate limiting implementation
+      - Ensure streaming responses are handled correctly
+      - Verify timeout configurations
+      - Check for proper error recovery mechanisms
+  
+  - path: "lib/src/voice/**/*.dart"
+    instructions: |
+      - Verify audio resources are properly released
+      - Check for permission handling
+      - Ensure audio buffer management is efficient
+      - Verify proper error handling for audio failures
+  
+  - path: "lib/src/memory/**/*.dart"
+    instructions: |
+      - Verify no memory leaks in storage
+      - Check for proper data serialization
+      - Ensure thread-safe operations
+      - Verify proper cleanup mechanisms
+
+# Review Focus Areas
+checks:
+  # Critical - Zero tolerance
+  - name: security_vulnerabilities
+    enabled: true
+    severity: critical
+  
+  - name: memory_leaks
+    enabled: true
+    severity: critical
+  
+  - name: null_safety_violations
+    enabled: true
+    severity: critical
+  
+  # High Priority
+  - name: api_documentation
+    enabled: true
+    severity: high
+    min_coverage: 100%
+  
+  - name: test_coverage
+    enabled: true
+    severity: high
+    min_coverage: 100%
+  
+  - name: type_safety
+    enabled: true
+    severity: high
+  
+  - name: error_handling
+    enabled: true
+    severity: high
+  
+  - name: resource_management
+    enabled: true
+    severity: high
+  
+  # Medium Priority
+  - name: code_complexity
+    enabled: true
+    severity: medium
+    max_cyclomatic: 10
+  
+  - name: code_duplication
+    enabled: true
+    severity: medium
+    max_duplication: 5%
+  
+  - name: naming_conventions
+    enabled: true
+    severity: medium
+  
+  - name: code_formatting
+    enabled: true
+    severity: medium
+  
+  # Performance
+  - name: performance_issues
+    enabled: true
+    severity: high
+  
+  - name: unnecessary_async
+    enabled: true
+    severity: medium
+  
+  - name: inefficient_collections
+    enabled: true
+    severity: medium
+
+# Analysis Configuration
+analysis:
+  # Use strict analysis options from analysis_options.yaml
+  strict_mode: true
+  
+  # Custom rules
+  rules:
+    - rule: "public_member_api_docs"
+      severity: error
+      description: "All public members must have documentation"
+    
+    - rule: "always_specify_types"
+      severity: error
+      description: "All types must be explicitly specified"
+    
+    - rule: "prefer_final_fields"
+      severity: error
+      description: "Prefer final fields for immutability"
+    
+    - rule: "avoid_print"
+      severity: error
+      description: "Use proper logging instead of print"
+    
+    - rule: "unawaited_futures"
+      severity: error
+      description: "All futures must be awaited or explicitly ignored"
+    
+    - rule: "use_build_context_synchronously"
+      severity: error
+      description: "BuildContext must not be used after async gaps"
+
+# Pull Request Guidelines
+pull_request:
+  # Require descriptions
+  require_description: true
+  min_description_length: 100
+  
+  # Require linked issues
+  require_linked_issue: true
+  
+  # Checklist items
+  checklist:
+    - "Tests added for new functionality"
+    - "All tests passing"
+    - "Documentation updated"
+    - "No breaking changes (or documented)"
+    - "Code follows analysis_options.yaml rules"
+    - "100% code coverage maintained"
+    - "No TODO/FIXME comments"
+    - "All public APIs documented"
+    - "Error handling comprehensive"
+    - "Resources properly disposed"
+  
+  # Labels
+  auto_labels:
+    bug: ["bug", "fix", "hotfix"]
+    feature: ["feature", "enhancement"]
+    documentation: ["docs", "documentation"]
+    breaking: ["breaking", "major"]
+    performance: ["performance", "optimization"]
+    security: ["security"]
+
+# Comment Templates
+comments:
+  greeting: |
+    👋 Thanks for your contribution to Flutter AI Agent SDK!
+    
+    I'm CodeRabbit, and I'll be reviewing your code for:
+    - 🔒 Security vulnerabilities
+    - 📝 API documentation completeness
+    - 🧪 Test coverage
+    - 🎯 Code quality and best practices
+    - ⚡ Performance issues
+    - 🔧 Resource management
+  
+  suggestion_template: |
+    💡 **Suggestion:** {suggestion}
+    
+    **Severity:** {severity}
+    **Category:** {category}
+    
+    **Details:** {details}
+  
+  approval_template: |
+    ✅ **Code looks great!**
+    
+    All checks passed:
+    - Security: ✓
+    - Documentation: ✓
+    - Tests: ✓
+    - Quality: ✓
+    - Performance: ✓
+
+# Integration Settings
+integrations:
+  codecov:
+    enabled: true
+    min_coverage: 100%
+  
+  github_actions:
+    enabled: true
+    require_passing: true
+
+# Notification Settings
+notifications:
+  # When to notify
+  on:
+    - review_completed
+    - critical_issues_found
+    - approval_given
+  
+  # Who to notify
+  notify:
+    - pull_request_author
+    - repository_owner
+
+# Learning Settings
+learning:
+  # Learn from approvals
+  learn_from_approved_prs: true
+  
+  # Adapt to project style
+  adapt_to_project: true
+  
+  # Custom patterns to learn
+  patterns_to_learn:
+    - naming_conventions
+    - code_structure
+    - error_handling_patterns
+    - testing_patterns
+
+# Advanced Settings
+advanced:
+  # Incremental reviews for large PRs
+  incremental_review: true
+  
+  # Review timeout
+  timeout_minutes: 30
+  
+  # Max files per review
+  max_files_per_review: 50
+  
+  # Ignore patterns
+  ignore:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gen.dart"
+    - "**/*.mocks.dart"
+    - ".dart_tool/**"
+    - "build/**"
+    - "coverage/**"
+
+# Quality Gates
+quality_gates:
+  # Block merge if these fail
+  blocking:
+    - test_coverage_below_threshold
+    - security_vulnerability_found
+    - critical_bugs_present
+    - missing_documentation
+  
+  # Warn but don't block
+  warning:
+    - code_complexity_high
+    - code_duplication_detected
+    - performance_concerns

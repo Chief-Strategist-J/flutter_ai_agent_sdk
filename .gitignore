@@ -46,3 +46,12 @@ app.*.map.json
 # Generated files
 *.g.dart
 *.freezed.dart
+
+# Test logs and coverage
+test_logs/
+coverage/
+*.lcov
+lcov.info
+
+# Package analysis
+pana_report.json
