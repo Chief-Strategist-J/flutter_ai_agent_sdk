@@ -1,6 +1,6 @@
 name: flutter_ai_agent_sdk
 description: A high-performance, extensible AI Agent SDK for Flutter with voice interaction, LLM integration, and tool execution.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk
 repository: https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk
 issue_tracker: https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk/issues
