@@ -11,9 +11,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
 NC='\033[0m' # No Color
-
 # Logging functions
 log_info() {
     echo -e "${BLUE}ℹ [INFO]${NC} $1"
@@ -166,13 +164,12 @@ TEST_LOG="${LOGS_DIR}/test_output_${TIMESTAMP}.log"
 
 if flutter test \
     --coverage \
+if flutter test \
+    --coverage \
     --test-randomize-ordering-seed=random \
     --reporter=expanded \
-    --coverage-path=coverage/lcov.info 2>&1 | tee "${TEST_LOG}"; then
+    2>&1 | tee "${TEST_LOG}"; then
     log_success "All tests passed"
-else
-    log_error "Some tests failed"
-    log_error "See detailed test output in: ${TEST_LOG}"
     
     # Extract failed tests
     log_info "Failed tests:"

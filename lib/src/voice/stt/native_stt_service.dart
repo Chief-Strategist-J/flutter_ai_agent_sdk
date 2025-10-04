@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_ai_agent_sdk/src/utils/logger.dart';
 import 'package:flutter_ai_agent_sdk/src/voice/stt/speech_recognition_service.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -17,8 +16,8 @@ class NativeSTTService implements SpeechRecognitionService {
   final stt.SpeechToText _speech = stt.SpeechToText();
 
   /// Controller for streaming transcripts.
-  final BehaviorSubject<String> _transcriptController =
-      BehaviorSubject<String>();
+  final StreamController<String> _transcriptController =
+      StreamController<String>.broadcast();
 
   bool _isListening = false;
   bool _isAvailable = false;
@@ -55,15 +54,13 @@ class NativeSTTService implements SpeechRecognitionService {
   }
 
   @override
-  Future<String> startListening() async {
+  Future<void> startListening() async {
     if (!_isAvailable) {
       throw StateError('STT not initialized');
     }
 
     _currentTranscript = '';
     _isListening = true;
-
-    final Completer<String> completer = Completer<String>();
 
     await _speech.listen(
       onResult: (final SpeechRecognitionResult result) {
@@ -72,15 +69,12 @@ class NativeSTTService implements SpeechRecognitionService {
 
         if (result.finalResult) {
           _isListening = false;
-          completer.complete(_currentTranscript);
         }
       },
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 3),
       cancelOnError: true,
     );
-
-    return completer.future;
   }
 
   @override

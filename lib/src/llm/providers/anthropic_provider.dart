@@ -62,7 +62,9 @@ class AnthropicProvider extends LLMProvider {
         final dynamic data = jsonDecode(response.body);
         return _parseResponse(data as Map<String, dynamic>);
       } else {
-        throw Exception('Anthropic API error: ${response.statusCode}');
+        throw Exception(
+          'Anthropic API error: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e, stack) {
       AgentLogger.error('Anthropic generate failed', e, stack);
@@ -100,8 +102,10 @@ class AnthropicProvider extends LLMProvider {
 
       if (tools != null && tools.isNotEmpty) {
         body['tools'] = tools
-            .map((final Tool t) =>
-                _toolToAnthropicFormat(t) as Map<String, Object?>)
+            .map(
+              (final Tool t) =>
+                  _toolToAnthropicFormat(t) as Map<String, Object?>,
+            )
             .toList(growable: false);
       }
 

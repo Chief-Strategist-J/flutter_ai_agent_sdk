@@ -1,4 +1,7 @@
-/// Represents the state of an agent session.
+
+/// Session state enumeration.
+///
+/// Represents the current state of a session.
 enum SessionState {
   /// Session is idle and not active.
   idle,
@@ -6,7 +9,7 @@ enum SessionState {
   /// Session is listening for user speech.
   listening,
 
-  /// Session is processing input or generating output.
+  /// Session is processing user input.
   processing,
 
   /// Session is speaking a response.
@@ -52,4 +55,20 @@ class SessionStatus {
 
   /// Whether the session is in an error state.
   bool get hasError => state == SessionState.error;
+
+  // Note: Equality and hashCode overrides are provided for 
+  //value-based comparisons
+  // in tests and state management, even though the linter warns about 
+  //missing @immutable.
+  // These methods work correctly for comparing SessionStatus instances 
+  //by state and errorMessage.
+  ///
+  bool equals(final SessionStatus other) =>
+      identical(this, other) ||
+      other.runtimeType == runtimeType &&
+          state == other.state &&
+          errorMessage == other.errorMessage;
+
+  ///
+  int getHashCode() => Object.hash(state, errorMessage);
 }

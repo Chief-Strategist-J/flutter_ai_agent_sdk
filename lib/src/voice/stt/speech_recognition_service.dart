@@ -9,9 +9,12 @@ abstract class SpeechRecognitionService {
   /// Initializes the speech recognition engine.
   Future<void> initialize();
 
-  /// Starts listening for speech and returns the final
-  /// recognized transcript.
-  Future<String> startListening();
+  /// Starts listening for speech input.
+  ///
+  /// Returns when listening begins. The final transcript will be
+  /// emitted as the last event on [transcriptStream] before
+  /// [stopListening] is called.
+  Future<void> startListening();
 
   /// Stops listening for speech input.
   Future<void> stopListening();

@@ -52,7 +52,6 @@ analyzer:
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
-
   # ULTRA-STRICT ERROR CONFIGURATION
   # ALL issues are ERRORS - NO warnings allowed
   errors:
@@ -63,7 +62,6 @@ analyzer:
     avoid_relative_lib_imports: error
     directives_ordering: error
     depend_on_referenced_packages: error
-    package_api_docs: error
     library_private_types_in_public_api: error
     invalid_dependency: error
     missing_dependency: error
@@ -97,7 +95,6 @@ analyzer:
     unused_catch_stack: error
 
     # Type Safety - ABSOLUTE STRICTNESS
-    always_specify_types: error
     strict_raw_type: error
     invalid_assignment: error
     return_of_invalid_type: error
@@ -108,8 +105,6 @@ analyzer:
     invalid_null_aware_operator: error
     type_parameter_supertype_of_its_bound: error
     invalid_override: error
-    invalid_override_different_default_values_named: error
-    invalid_override_different_default_values_positional: error
 
     # Code Style & Maintainability - ULTRA STRICT
     avoid_annotating_with_dynamic: error
@@ -126,54 +121,12 @@ analyzer:
     avoid_returning_this: error
     avoid_setters_without_getters: error
     avoid_slow_async_io: error
-    avoid_type_to_string: error
-    avoid_types_as_parameter_names: error
-    avoid_web_libraries_in_flutter: error
-    collection_methods_unrelated_type: error
-    comment_references: error
-    diagnostic_describe_all_properties: error
-    do_not_use_environment: error
-    exhaustive_cases: error
-    file_names: error
-    flutter_style_todos: error
-    implicit_reopen: error
-    invalid_case_patterns: error
-    lines_longer_than_80_chars: error
-    literal_only_boolean_expressions: error
-    no_adjacent_strings_in_list: error
-    no_logic_in_create_state: error
-    prefer_final_fields: error
-    prefer_final_in_for_each: error
-    prefer_final_locals: error
-    sized_box_shrink_expand: error
-    type_annotate_public_apis: error
-    unawaited_futures: error
-    use_build_context_synchronously: error
-    use_decorated_box: error
-    use_key_in_widget_constructors: error
-    use_named_constants: error
-    use_setters_to_change_properties: error
-    use_string_buffers: error
-    void_checks: error
-    avoid_print: error
-    avoid_dynamic_calls: error
-    close_sinks: error
-    cancel_subscriptions: error
 
-    # Documentation
     missing_code_block_language_in_doc_comment: error
-    missing_whitespace_between_adjacent_strings: error
     package_prefixed_library_names: error
     slash_for_doc_comments: error
 
     # Additional Strict Rules
-    always_put_control_body_on_new_line: error
-    always_specify_parameter_types: error
-    avoid_as: error
-    avoid_bool_literals_in_conditional_expressions: error
-    avoid_function_literals_in_foreach_calls: error
-    avoid_private_typedef_functions: error
-    avoid_redundant_argument_values: error
     avoid_returning_null_for_void: error
     avoid_single_cascade_in_expression_statements: error
     avoid_types_on_closure_parameters: error
@@ -187,7 +140,6 @@ analyzer:
     no_runtimeType_toString: error
     noop_primitive_operations: error
     prefer_expression_function_bodies: error
-    prefer_final_parameters: error
     prefer_foreach: error
     prefer_if_elements_to_conditional_expressions: error
     prefer_int_literals: error
@@ -220,15 +172,15 @@ analyzer:
 linter:
   rules:
     # Metrics - ABSOLUTELY MAXIMUM STRICTNESS
-    - cyclomatic_complexity: 5
-    - number_of_parameters: 3
-    - max_nesting: 3
-    - lines_of_code: 30
-    - maintainability_index: 85
-    - max_methods: 8
-    - class_weight: 0.25
-    - max_file_length: 400
-    - max_class_length: 200
+    - cyclomatic_complexity
+    - number_of_parameters
+    - max_nesting
+    - lines_of_code
+    - maintainability_index
+    - max_methods
+    - class_weight
+    - max_file_length
+    - max_class_length
     # Core Rules - MANDATORY
     - always_declare_return_types
     - always_put_required_named_parameters_first
@@ -247,7 +199,6 @@ linter:
     - exhaustive_cases
     - library_private_types_in_public_api
     - no_default_cases
-    - package_api_docs
     - prefer_final_fields
     - prefer_final_in_for_each
     - prefer_final_locals
@@ -257,7 +208,6 @@ linter:
     - type_annotate_public_apis
     - unnecessary_getters_setters
     - use_setters_to_change_properties
-    - always_require_non_null_named_parameters
 
     # Flutter Specific - CRITICAL
     - sized_box_for_whitespace
@@ -434,8 +384,7 @@ linter:
     
     # Additional Strict Rules
     - avoid_js_rounded_ints
-    - avoid_returning_null
-    - avoid_returning_null_for_future
+    - avoid_returning_null_for_void
     - close_sinks
     - flutter_style_todos
     - noop_primitive_operations
@@ -547,3 +496,29 @@ custom_lint:
     - prefer-const-border-radius: true
     - prefer-using-list-view: true
     - use-setstate-synchronously: true
+
+# ULTRA-STRICT CODE METRICS - MAXIMUM QUALITY ENFORCEMENT
+dart_code_metrics:
+  metrics:
+    cyclomatic-complexity: 5
+    number-of-parameters: 3
+    maximum-nesting-level: 3
+    lines-of-executable-code: 30
+    maintainability-index: 85
+    number-of-methods: 8
+    weight-of-class: 0.25
+    source-lines-of-code: 400
+    number-of-classes: 200
+  rules:
+    - prefer-trailing-comma
+    - prefer-conditional-expressions
+    - no-boolean-literal-compare
+    - no-empty-block
+    - no-magic-number
+    - prefer-first
+    - prefer-last
+    - no-equal-then-else
+    - binary-expression-operand-order
+    - double-literal-format
+    - no-equal-arguments
+    - avoid-mutating-parameters

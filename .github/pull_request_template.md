@@ -28,11 +28,11 @@ Closes #
 
 ### Tests Added
 <!-- List the test files/scenarios added -->
-- [ ] 
+- [ ]
 
 ### Manual Testing
 <!-- Describe manual testing steps if applicable -->
-1. 
+1.
 
 ## Checklist
 <!-- Ensure all items are completed before requesting review -->

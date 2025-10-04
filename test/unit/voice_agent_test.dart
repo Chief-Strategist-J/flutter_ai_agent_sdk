@@ -126,13 +126,12 @@ void main() {
 
         // Assert: Stream is empty
         expect(eventsStream, isA<Stream<AgentEvent>>());
-        final List<AgentEvent> events =
-            await eventsStream.take(1).timeout(
-                  const Duration(milliseconds: 100),
-                  onTimeout: (final EventSink<AgentEvent> sink) {
-                    sink.close();
-                  },
-                ).toList();
+        final List<AgentEvent> events = await eventsStream.take(1).timeout(
+          const Duration(milliseconds: 100),
+          onTimeout: (final EventSink<AgentEvent> sink) {
+            sink.close();
+          },
+        ).toList();
         expect(events, isEmpty);
       });
 
@@ -158,13 +157,12 @@ void main() {
         final Stream<AgentEvent> eventsStream = agent.events;
 
         // Assert: Stream is empty
-        final List<AgentEvent> events =
-            await eventsStream.take(1).timeout(
-                  const Duration(milliseconds: 100),
-                  onTimeout: (final EventSink<AgentEvent> sink) {
-                    sink.close();
-                  },
-                ).toList();
+        final List<AgentEvent> events = await eventsStream.take(1).timeout(
+          const Duration(milliseconds: 100),
+          onTimeout: (final EventSink<AgentEvent> sink) {
+            sink.close();
+          },
+        ).toList();
         expect(events, isEmpty);
       });
     });
@@ -379,8 +377,7 @@ void main() {
         expect(agent.currentSession, equals(newSession));
       });
 
-      test('should_handleMultipleCloseCalls_when_calledRepeatedly',
-          () async {
+      test('should_handleMultipleCloseCalls_when_calledRepeatedly', () async {
         // Arrange: Create agent and session
         final VoiceAgent agent = VoiceAgent(config: testConfig);
         await agent.createSession();
@@ -479,11 +476,11 @@ void main() {
         // Assert: Resources are released
         expect(agent.currentSession, isNull);
         final List<AgentEvent> events = await agent.events.take(1).timeout(
-              const Duration(milliseconds: 100),
-              onTimeout: (final EventSink<AgentEvent> sink) {
-                sink.close();
-              },
-            ).toList();
+          const Duration(milliseconds: 100),
+          onTimeout: (final EventSink<AgentEvent> sink) {
+            sink.close();
+          },
+        ).toList();
         expect(events, isEmpty);
       });
 

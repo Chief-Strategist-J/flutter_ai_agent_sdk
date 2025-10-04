@@ -214,7 +214,7 @@ Tests run automatically on:
 - Every pull request
 - Manual workflow dispatch
 
-View results at: https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk/actions
+View results at: [GitHub Actions](https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk/actions)
 
 ## 💡 Tips
 

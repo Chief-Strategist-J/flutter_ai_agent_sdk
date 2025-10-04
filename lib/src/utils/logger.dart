@@ -30,7 +30,10 @@ class AgentLogger {
   /// Logs an error [message] with optional [error] and
   /// [stackTrace].
   static void error(
-      final String message, final Object? error, final StackTrace? stackTrace) {
+    final String message,
+    final Object? error,
+    final StackTrace? stackTrace,
+  ) {
     _logger.e(message, error: error, stackTrace: stackTrace);
   }
 }

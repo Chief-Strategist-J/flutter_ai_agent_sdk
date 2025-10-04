@@ -316,6 +316,7 @@ dart pub publish --dry-run
 ## 🆘 Getting Help
 
 ### Issues Running Tests?
+
 ```bash
 # Verbose test output
 flutter test --reporter expanded
@@ -328,6 +329,7 @@ flutter test --verbose
 ```
 
 ### Analysis Errors?
+
 ```bash
 # List all errors
 flutter analyze > errors.txt
@@ -337,6 +339,7 @@ flutter analyze lib/src/path/to/file.dart
 ```
 
 ### Coverage Issues?
+
 ```bash
 # Ensure lcov is installed
 # macOS

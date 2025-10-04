@@ -21,7 +21,8 @@ class EnergyBasedVAD implements VoiceActivityDetector {
   EnergyBasedVAD({
     this.threshold = 0.02,
     this.smoothingWindow = 3,
-  });
+  })  : assert(threshold > 0, 'threshold must be positive'),
+        assert(smoothingWindow > 0, 'smoothingWindow must be at least 1');
 
   /// Energy threshold for speech detection.
   final double threshold;

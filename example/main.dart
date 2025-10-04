@@ -221,7 +221,7 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
 
   @override
   void dispose() {
-    unawaited(_agent.closeSession());
+    _agent.dispose();
     super.dispose();
   }
 }

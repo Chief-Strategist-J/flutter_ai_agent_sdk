@@ -22,7 +22,7 @@ Both `.coderabbit.yaml` and `analysis_options.yaml` have been configured with **
 - ✅ NO print statements - use proper logging
 - ✅ NO TODO/FIXME comments allowed
 - ✅ NO magic numbers or hardcoded strings
-- ✅ Methods under 50 lines, cyclomatic complexity < 10
+- ✅ Methods under 30 lines, cyclomatic complexity < 10
 - ✅ NO dynamic types without justification
 - ✅ ALL resources properly disposed
 - ✅ BuildContext NEVER used after async gaps
@@ -33,7 +33,7 @@ Both `.coderabbit.yaml` and `analysis_options.yaml` have been configured with **
 - ✅ EVERY edge case MUST be covered
 - ✅ 100% code coverage - NO exceptions
 - ✅ NO test.skip allowed
-- ✅ EVERY public method needs at least 3 tests
+- ✅ EVERY public method needs at least 5 tests
 - ✅ Test naming: `should_expectedBehavior_when_condition`
 
 **`lib/src/core/**/*.dart` (Core Architecture)**

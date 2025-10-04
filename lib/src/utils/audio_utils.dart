@@ -9,6 +9,8 @@ class AudioUtils {
   static const int _i16Min = -32768;
   static const int _i16Max = 32767;
   static const double _i16Scale = 32768;
+  /// Tolerance for floating-point precision when validating normalized samples.
+  static const double _normalizedTolerance = 1.0000001;
 
   /// Normalizes 16-bit PCM [pcmData] (values in [-32768, 32767])
   /// to [-1.0, 1.0].
@@ -48,7 +50,7 @@ class AudioUtils {
       final double x = normalizedData[i];
       // Debug-only guard: ensure normalized values are in [-1.0, 1.0]
       assert(
-        x >= -1.0000001 && x <= 1.0000001,
+        x >= -_normalizedTolerance && x <= _normalizedTolerance,
         'Normalized sample out of range at index $i: $x',
       );
 
@@ -89,10 +91,8 @@ class AudioUtils {
 
     for (int i = 0; i < n; i++) {
       final double y = audioData[i] * gain;
-      // Use min/max to keep type as double (avoid num from clamp()).
+      // Clamp to [-1.0, 1.0] range using ternary (no dart:math import needed)
       result[i] = y < -1.0 ? -1.0 : (y > 1.0 ? 1.0 : y);
-      // Alternatively:
-      // result[i] = math.max(-1.0, math.min(1.0, y));
     }
     return result;
   }

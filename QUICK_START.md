@@ -125,7 +125,7 @@ open coverage/html/index.html
 ## 🤖 Setup CodeRabbit
 
 ### 1. Install
-1. Go to https://github.com/apps/coderabbitai
+1. Go to [CodeRabbit GitHub App](https://github.com/apps/coderabbitai)
 2. Click **Install**
 3. Select **Chief-Strategist-J** account
 4. Choose **flutter_ai_agent_sdk** repository

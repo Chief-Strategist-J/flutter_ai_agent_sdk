@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_ai_agent_sdk/src/core/models/message.dart';
@@ -63,14 +64,20 @@ class OpenAIProvider extends LLMProvider {
         );
       }
 
-      final http.Response response = await http.post(
-        Uri.parse('$baseUrl/chat/completions'),
-        headers: <String, String>{
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(body),
-      );
+      final http.Response response = await http
+          .post(
+            Uri.parse('$baseUrl/chat/completions'),
+            headers: <String, String>{
+              'Authorization': 'Bearer $apiKey',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(body),
+          )
+          .timeout(
+            const Duration(seconds: 60),
+            onTimeout: () =>
+                throw TimeoutException('OpenAI API request timed out'),
+          );
 
       if (response.statusCode == 200) {
         final String raw = response.body;
@@ -141,7 +148,13 @@ class OpenAIProvider extends LLMProvider {
 
       request.body = jsonEncode(body);
 
-      final http.StreamedResponse streamedResponse = await request.send();
+      final http.StreamedResponse streamedResponse = await request
+          .send()
+          .timeout(
+            const Duration(seconds: 60),
+            onTimeout: () =>
+                throw TimeoutException('OpenAI streaming request timed out'),
+          );
 
       await for (final String chunk
           in streamedResponse.stream.transform(utf8.decoder)) {

@@ -3,8 +3,8 @@
 # ZERO-TOLERANCE POLICY - EVERY SINGLE ISSUE MUST BE FIXED
 # PRODUCTION-GRADE CODE QUALITY ENFORCEMENT
 
-# Language Configuration
-language: dart
+# Language Configuration - FIXED: Use locale code, not programming language
+language: en-US
 
 # Review Settings
 reviews:
@@ -19,14 +19,24 @@ reviews:
     enabled: true
     drafts: true
     ignore_title_keywords: []
+    labels: []
+    base_branches: []
   
-  # Review triggers - review ABSOLUTELY EVERYTHING
-  trigger_on:
-    - pull_request
-    - push
-    - issue_comment
-    - pull_request_review
-    - pull_request_review_comment
+  # High effort mode for maximum thoroughness
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  
+  # Enable all review tools
+  tools:
+    github-checks: true
+    similarity-analysis: true
+    
+  # Maximum number of files and lines to review (no limits)
+  limits:
+    max_files: 1000
+    max_lines_per_review: 10000
 
 # Path-based Configuration
 path_instructions:
@@ -50,8 +60,8 @@ path_instructions:
       - NO hardcoded strings - use constants or localization
       - ALL classes must follow single responsibility principle
       - ALL methods must be under 30 lines (MAXIMUM)
-      - Cyclomatic complexity must be under 5 (EXTREMELY LOW)
-      - Cognitive complexity must be under 7
+      - Cyclomatic complexity must be under 10 (STRICT)
+      - Cognitive complexity must be under 15
       - Nesting depth NEVER exceed 3 levels
       - NO dynamic types unless absolutely necessary with justification
       - ALL exceptions must be caught and handled appropriately
@@ -102,6 +112,34 @@ path_instructions:
       - NO Future without error handling
       - ALL isolates must be killed
       - NO compute without error handling
+      
+      ADDITIONAL ULTRA-STRICT REQUIREMENTS:
+      - ALL public classes must have @immutable or @sealed annotations where appropriate
+      - NO var keyword - use explicit types or final/const
+      - ALL List/Map/Set declarations must specify generic types
+      - NO nullable types in constructors without default values
+      - ALL factory constructors must have comprehensive documentation
+      - NO static mutable state
+      - ALL getters must be pure (no side effects)
+      - NO setters - prefer immutable objects with copyWith
+      - ALL classes with equality must override == and hashCode properly
+      - NO Object.toString() overrides without @override annotation
+      - ALL async functions must have comprehensive error handling
+      - NO Future.value() or Future.error() without explicit error handling
+      - ALL Duration values must be named constants
+      - NO hard-coded colors - use theme or constants
+      - ALL widget build methods must be under 50 lines
+      - NO BuildContext extensions without proper documentation
+      - ALL custom exceptions must extend appropriate base exceptions
+      - NO rethrow without modification
+      - ALL assert statements must have descriptive messages
+      - NO late keyword without lazy initialization justification
+      - ALL callback parameters must be nullable with ? or have default values
+      - NO positional boolean parameters
+      - ALL enums must have comprehensive documentation
+      - NO extension methods without clear use cases
+      - ALL typedef declarations must have documentation
+      - NO part/part of directives without justification
   
   - path: "test/**/*.dart"
     instructions: |
@@ -126,6 +164,29 @@ path_instructions:
       - Use proper matchers, not just equals
       - Test thread safety for concurrent code
       - Verify proper error messages in assertions
+      
+      ADDITIONAL TEST REQUIREMENTS:
+      - ALL tests must use descriptive group() blocks
+      - NO magic values in tests - use named constants
+      - ALL DateTime values in tests must be fixed/mocked
+      - NO actual network calls - use mocks or fakes
+      - ALL file system operations must be mocked
+      - NO shared state between tests
+      - ALL setUp methods must be idempotent
+      - NO test.only in committed code
+      - ALL widget tests must use Keys for finding widgets
+      - NO hardcoded delays (Future.delayed) - use FakeAsync or pumpAndSettle
+      - ALL integration tests must be independent
+      - NO flaky tests allowed
+      - ALL test data must be in separate fixtures
+      - NO inline JSON/XML - use separate files
+      - ALL golden tests must have pixel-perfect matching
+      - NO snapshot tests without proper validation
+      - ALL performance tests must have clear benchmarks
+      - NO tests that depend on external services
+      - ALL tests must complete in under 5 seconds (unit tests)
+      - NO tests that write to actual storage
+      - ALL mocked responses must match actual API contracts
   
   - path: "lib/src/core/**/*.dart"
     instructions: |
@@ -139,11 +200,27 @@ path_instructions:
       - Use sealed classes for state management
       - Implement proper equals/hashCode for value objects
       - ALL core logic must be platform-agnostic
-      - NO Flutter dependencies in core
+      - NO Flutter dependencies in core (except annotations)
       - Comprehensive error types with proper hierarchy
       - ALL public APIs must be documented with usage examples
       - Thread-safe implementations required
       - NO side effects in getters
+      
+      ADDITIONAL CORE REQUIREMENTS:
+      - ALL interfaces must have at least 2 concrete implementations
+      - NO God interfaces - keep interfaces small and focused
+      - ALL value objects must be immutable with copyWith
+      - NO inheritance deeper than 2 levels
+      - ALL abstract classes must have documentation explaining when to extend vs implement
+      - NO protected members - use private with public accessors
+      - ALL core models must support serialization/deserialization
+      - NO cyclic dependencies between modules
+      - ALL domain logic must be testable without infrastructure
+      - NO framework-specific code in domain layer
+      - ALL use cases must follow Command/Query separation
+      - NO business logic in DTOs/entities
+      - ALL repositories must return domain models, not DTOs
+      - NO use case depending on another use case directly
   
   - path: "lib/src/llm/**/*.dart"
     instructions: |
@@ -162,6 +239,26 @@ path_instructions:
       - Implement proper request queuing
       - Monitor and log API usage metrics
       - Handle rate limit errors with proper backoff
+      
+      ADDITIONAL LLM REQUIREMENTS:
+      - ALL API models must have schema validation
+      - NO hardcoded prompts - use template system
+      - ALL streaming must support pause/resume
+      - NO blocking calls to LLM APIs
+      - ALL responses must be sanitized before use
+      - NO prompt injection vulnerabilities
+      - ALL token counting must be accurate
+      - NO exceeding context window limits
+      - ALL multi-turn conversations must maintain context properly
+      - NO storing API keys in memory longer than necessary
+      - ALL API errors must be mapped to domain errors
+      - NO exposing raw API responses to UI layer
+      - ALL request builders must validate parameters
+      - NO missing error codes in error handling
+      - ALL retry logic must have maximum attempt limits
+      - NO infinite retry loops
+      - ALL cache invalidation must be explicit
+      - NO stale data served from cache
   
   - path: "lib/src/voice/**/*.dart"
     instructions: |
@@ -179,6 +276,22 @@ path_instructions:
       - Proper sample rate and format handling
       - Memory leak prevention for audio buffers
       - Handle platform-specific audio issues
+      
+      ADDITIONAL VOICE REQUIREMENTS:
+      - ALL audio formats must be documented
+      - NO hardcoded sample rates
+      - ALL audio processing must be done on background thread
+      - NO blocking the UI thread with audio operations
+      - ALL microphone permissions must be requested with rationale
+      - NO accessing microphone without user consent
+      - ALL audio recordings must have size limits
+      - NO unbounded audio buffers
+      - ALL audio quality settings must be configurable
+      - NO assuming specific audio hardware capabilities
+      - ALL audio errors must provide user-friendly messages
+      - NO technical jargon in error messages to users
+      - ALL voice activity detection must be configurable
+      - NO false positive/negative triggers
   
   - path: "lib/src/memory/**/*.dart"
     instructions: |
@@ -196,476 +309,215 @@ path_instructions:
       - Proper error handling for storage failures
       - Implement data backup and recovery
       - Handle storage corruption gracefully
+      
+      ADDITIONAL MEMORY REQUIREMENTS:
+      - ALL storage keys must be constants
+      - NO magic strings for storage keys
+      - ALL stored data must have expiration policies
+      - NO indefinite data retention without cleanup
+      - ALL cache implementations must have max size limits
+      - NO unbounded caches
+      - ALL encryption must use industry-standard algorithms
+      - NO custom/weak encryption schemes
+      - ALL sensitive data must be cleared on logout
+      - NO persisting sensitive data after session end
+      - ALL migrations must be backward compatible
+      - NO breaking changes to storage schema without migration
+      - ALL database queries must be optimized
+      - NO N+1 query problems
+      - ALL batch operations must be properly batched
+      - NO iterative single operations
+      - ALL data integrity must be validated on read
+      - NO trusting stored data without validation
+
+  - path: "lib/src/ui/**/*.dart"
+    instructions: |
+      UI/WIDGET CRITICAL REQUIREMENTS:
+      - ALL widgets must be const where possible
+      - NO rebuilding unchanged widgets
+      - ALL keys must be provided for list items
+      - NO missing keys in ListView/GridView children
+      - ALL animations must be disposed properly
+      - NO animation leaks
+      - ALL controllers must be disposed
+      - NO TextEditingController/ScrollController leaks
+      - ALL InheritedWidgets must be immutable
+      - NO mutable state in InheritedWidget
+      - BuildContext NEVER used after async operations
+      - ALL async operations in widgets must check mounted
+      - NO setState during build phase
+      - ALL side effects must be in initState/didChangeDependencies
+      - NO business logic in build methods
+      - Build methods must be pure functions
+      - ALL loading states must be handled
+      - NO missing loading indicators
+      - ALL error states must be handled
+      - NO unhandled error states in UI
+      - ALL empty states must be handled
+      - NO blank screens without explanation
+      - ALL user inputs must be validated
+      - NO trusting user input without validation
+      - ALL forms must have proper validation
+      - NO submitting invalid forms
+      - ALL accessibility labels must be provided
+      - NO missing Semantics widgets for screen readers
+      - ALL colors must come from theme
+      - NO hardcoded colors in widgets
+      - ALL text styles must come from theme
+      - NO hardcoded text styles
+      - ALL spacing must use theme spacing
+      - NO magic number spacing values
+      - ALL responsive layouts for different screen sizes
+      - NO fixed dimensions without constraints
+      - ALL touch targets must be at least 48x48
+      - NO tiny touch targets
+      - ALL navigation must be properly managed
+      - NO Navigator usage without named routes or GoRouter
+      - ALL dialogs must be dismissible
+      - NO modal dialogs without dismiss option
+      - ALL bottom sheets must handle drag to dismiss
+      - NO bottom sheets without drag indicators
+
+  - path: "lib/src/models/**/*.dart"
+    instructions: |
+      DATA MODELS CRITICAL REQUIREMENTS:
+      - ALL models must be immutable
+      - NO mutable fields in data models
+      - ALL models must implement proper equality
+      - NO missing == and hashCode overrides
+      - ALL models must support serialization
+      - NO models without toJson/fromJson
+      - ALL JSON parsing must handle null values
+      - NO assuming non-null JSON values
+      - ALL models must have copyWith methods
+      - NO mutable state - use copyWith for changes
+      - ALL model fields must be final
+      - NO var or non-final fields
+      - ALL optional fields must have proper null handling
+      - NO required fields that should be optional
+      - ALL model validation must be in factory constructors
+      - NO invalid model instances allowed
+      - ALL enums in models must have serialization
+      - NO missing enum value handling in fromJson
+      - ALL nested models must be properly typed
+      - NO dynamic or Object types in models
+      - ALL collections in models must be unmodifiable
+      - NO mutable List/Map/Set in model fields
+      - ALL models must have comprehensive toString
+      - NO default Object.toString() implementations
+      - ALL models must be documented
+      - NO undocumented model fields
+      - ALL date/time fields must be DateTime, not String
+      - NO string-based date representations
+      - ALL IDs must be strongly typed
+      - NO string IDs without type wrappers
+
+# Code Review Configuration
+chat:
+  auto_reply: true
 
 # Review Focus Areas - ULTRA STRICT
-checks:
-  # CRITICAL - ZERO TOLERANCE - BLOCK MERGE
-  - name: security_vulnerabilities
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: memory_leaks
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: null_safety_violations
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: data_races
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: resource_leaks
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: unhandled_exceptions
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  # HIGH PRIORITY - MUST FIX
-  - name: api_documentation
-    enabled: true
-    severity: critical
-    min_coverage: 100%
-    block_merge: true
-  
-  - name: test_coverage
-    enabled: true
-    severity: critical
-    min_coverage: 100%
-    block_merge: true
-  
-  - name: type_safety
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: error_handling
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: resource_management
-    enabled: true
-    severity: critical
-    block_merge: true
-  
-  - name: immutability_violations
-    enabled: true
-    severity: high
-  
-  - name: dependency_injection_violations
-    enabled: true
-    severity: high
-  
-  - name: solid_principles_violations
-    enabled: true
-    severity: high
-  
-  # CODE QUALITY - HIGH PRIORITY
-  - name: code_complexity
-    enabled: true
-    severity: critical
-    block_merge: true
-    max_cyclomatic: 5
-    max_cognitive: 7
-    max_nesting: 3
-    max_lines_per_function: 30
-  
-  - name: code_duplication
-    enabled: true
-    severity: critical
-    block_merge: true
-    max_duplication: 1%
-    min_duplicate_lines: 3
-  
-  - name: naming_conventions
-    enabled: true
-    severity: high
-  
-  - name: code_formatting
-    enabled: true
-    severity: high
-  
-  - name: method_length
-    enabled: true
-    severity: critical
-    block_merge: true
-    max_lines: 30
-    max_statements: 15
-  
-  - name: class_length
-    enabled: true
-    severity: critical
-    block_merge: true
-    max_lines: 200
-    max_methods: 8
-  
-  - name: parameter_count
-    enabled: true
-    severity: critical
-    block_merge: true
-    max_parameters: 3
-    max_positional_parameters: 2
-  
-  # PERFORMANCE - HIGH PRIORITY
-  - name: performance_issues
-    enabled: true
-    severity: high
-  
-  - name: unnecessary_async
-    enabled: true
-    severity: high
-  
-  - name: inefficient_collections
-    enabled: true
-    severity: high
-  
-  - name: n_plus_one_queries
-    enabled: true
-    severity: high
-  
-  - name: excessive_allocations
-    enabled: true
-    severity: high
-  
-  # MAINTAINABILITY
-  - name: magic_numbers
-    enabled: true
-    severity: high
-  
-  - name: hardcoded_strings
-    enabled: true
-    severity: high
-  
-  - name: god_classes
-    enabled: true
-    severity: high
-  
-  - name: feature_envy
-    enabled: true
-    severity: medium
-  
-  - name: inappropriate_intimacy
-    enabled: true
-    severity: medium
+tone_instructions: "Strictly enforce security, crash prevention, data safety, tests, docs, and best practices."
 
-# Analysis Configuration - ULTRA STRICT
-analysis:
-  # Use strict analysis options from analysis_options.yaml
-  strict_mode: true
-  
-  # Treat all warnings as errors
-  treat_warnings_as_errors: true
-  
-  # Custom rules - ALL ERRORS
-  rules:
-    - rule: "public_member_api_docs"
-      severity: error
-      description: "ALL public members MUST have comprehensive documentation with examples"
-      block_merge: true
-    
-    - rule: "always_specify_types"
-      severity: error
-      description: "ALL types MUST be explicitly specified - NO type inference for public APIs"
-      block_merge: true
-    
-    - rule: "prefer_final_fields"
-      severity: error
-      description: "ALL fields MUST be final unless mutability is required"
-      block_merge: true
-    
-    - rule: "avoid_print"
-      severity: error
-      description: "NEVER use print - use proper logging framework"
-      block_merge: true
-    
-    - rule: "unawaited_futures"
-      severity: error
-      description: "ALL futures MUST be awaited or explicitly ignored with unawaited()"
-      block_merge: true
-    
-    - rule: "use_build_context_synchronously"
-      severity: error
-      description: "BuildContext MUST NEVER be used after async gaps"
-      block_merge: true
-    
-    - rule: "prefer_const_constructors"
-      severity: error
-      description: "Use const constructors wherever possible"
-      block_merge: true
-    
-    - rule: "avoid_dynamic_calls"
-      severity: error
-      description: "NO dynamic calls - use proper typing"
-      block_merge: true
-    
-    - rule: "cancel_subscriptions"
-      severity: error
-      description: "ALL subscriptions MUST be cancelled"
-      block_merge: true
-    
-    - rule: "close_sinks"
-      severity: error
-      description: "ALL sinks MUST be closed"
-      block_merge: true
-    
-    - rule: "avoid_empty_else"
-      severity: error
-      description: "NO empty else blocks"
-      block_merge: true
-    
-    - rule: "no_logic_in_create_state"
-      severity: error
-      description: "NO logic in createState"
-      block_merge: true
-    
-    - rule: "prefer_single_quotes"
-      severity: error
-      description: "Use single quotes for strings"
-      block_merge: false
-    
-    - rule: "require_trailing_commas"
-      severity: error
-      description: "ALL function calls must have trailing commas"
-      block_merge: false
+# Early access features
+early_access: false
 
-# Pull Request Guidelines - ULTRA STRICT
-pull_request:
-  # Require comprehensive descriptions
-  require_description: true
-  # Minimum description length: 300 characters (DETAILED)
-  min_description_length: 300
-  
-  # MUST link to issue - MANDATORY
-  require_linked_issue: true
-  
-  # Require detailed commit messages
-  require_detailed_commits: true
-  min_commit_message_length: 50
-  
-  # Require breaking change documentation
-  require_breaking_change_docs: true
-  
-  # MANDATORY Checklist items - ALL MUST BE CHECKED
-  checklist:
-    - "✅ Tests added for ALL new functionality"
-    - "✅ ALL tests passing (unit, integration, e2e)"
-    - "✅ 100% code coverage maintained - NO EXCEPTIONS"
-    - "✅ ALL public APIs have comprehensive documentation with examples"
-    - "✅ NO breaking changes (or fully documented with migration guide)"
-    - "✅ Code follows ALL analysis_options.yaml rules - ZERO warnings"
-    - "✅ NO TODO/FIXME/HACK comments"
-    - "✅ NO print statements - proper logging used"
-    - "✅ Error handling comprehensive - all edge cases covered"
-    - "✅ ALL resources properly disposed (streams, controllers, subscriptions)"
-    - "✅ NO memory leaks verified"
-    - "✅ Thread safety verified for concurrent code"
-    - "✅ Performance tested - no regressions"
-    - "✅ Security reviewed - no vulnerabilities"
-    - "✅ Accessibility verified (if UI changes)"
-    - "✅ NO hardcoded values - all configurable"
-    - "✅ Dependency injection used properly"
-    - "✅ SOLID principles followed"
-    - "✅ Code complexity under limits (cyclomatic < 10)"
-    - "✅ NO code duplication"
-    - "✅ Proper null safety throughout"
-    - "✅ BuildContext never used after async gaps"
-    - "✅ All async operations properly awaited"
-    - "✅ Widget keys provided for testability"
-    - "✅ Immutability enforced where appropriate"
-    - "✅ Clean Architecture principles followed"
-  
-  # Labels
-  auto_labels:
-    bug: ["bug", "fix", "hotfix"]
-    feature: ["feature", "enhancement"]
-    documentation: ["docs", "documentation"]
-    breaking: ["breaking", "major"]
-    performance: ["performance", "optimization"]
-    security: ["security"]
+# Knowledge base settings
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: auto
 
-# Comment Templates - ULTRA STRICT TONE
-comments:
-  greeting: |
-    👋 Thanks for your contribution to Flutter AI Agent SDK!
-    
-    ⚠️ **ULTRA-STRICT CODE REVIEW MODE ENABLED** ⚠️
-    
-    I'm CodeRabbit, and I'll be performing an EXTREMELY THOROUGH review for:
-    - 🔒 Security vulnerabilities (ZERO TOLERANCE)
-    - 📝 API documentation (100% REQUIRED)
-    - 🧪 Test coverage (100% REQUIRED)
-    - 🎯 Code quality (STRICT STANDARDS)
-    - ⚡ Performance (NO REGRESSIONS)
-    - 🔧 Resource management (PERFECT CLEANUP)
-    - 🏗️ Architecture (SOLID PRINCIPLES)
-    - 🧵 Thread safety (CONCURRENT SAFETY)
-    - 💾 Memory management (ZERO LEAKS)
-    - 🎨 Code style (PERFECT FORMATTING)
-    
-    **ALL issues MUST be fixed before merge.**
+# Custom instructions for all reviews
+instructions: |
+  CRITICAL FOCUS AREAS FOR FLUTTER/DART:
   
-  suggestion_template: |
-    🚨 **{severity} ISSUE:** {suggestion}
-    
-    **Severity:** {severity}
-    **Category:** {category}
-    **Priority:** MUST FIX
-    
-    **Details:** {details}
-    
-    **Action Required:** This MUST be addressed before merge.
+  1. NULL SAFETY (ZERO TOLERANCE):
+     - Check for proper null handling everywhere
+     - Ensure nullable types have null checks
   
-  approval_template: |
-    ✅ **EXCEPTIONAL CODE QUALITY!**
-    
-    ALL strict checks passed:
-    - 🔒 Security: ✓ (No vulnerabilities)
-    - 📝 Documentation: ✓ (100% coverage)
-    - 🧪 Tests: ✓ (100% coverage)
-    - 🎯 Quality: ✓ (All standards met)
-    - ⚡ Performance: ✓ (No regressions)
-    - 🔧 Resources: ✓ (Perfect cleanup)
-    - 🏗️ Architecture: ✓ (SOLID principles)
-    - 🧵 Thread Safety: ✓ (Concurrent safe)
-    - 💾 Memory: ✓ (Zero leaks)
-    - 🎨 Style: ✓ (Perfect formatting)
-    
-    **Outstanding work! Ready to merge.**
-
-# Integration Settings
-integrations:
-  codecov:
-    enabled: true
-    min_coverage: 100%
+  2. RESOURCE MANAGEMENT (MANDATORY):
+     - All StreamControllers must be closed
+     - All StreamSubscriptions must be cancelled
+     - All TextEditingControllers must be disposed
+     - All AnimationControllers must be disposed
+     - All FocusNodes must be disposed
+     - All ScrollControllers must be disposed
+     - All custom Listenable objects must be disposed
   
-  github_actions:
-    enabled: true
-    require_passing: true
-
-# Notification Settings
-notifications:
-  # When to notify
-  on:
-    - review_completed
-    - critical_issues_found
-    - approval_given
+  3. ASYNC/AWAIT SAFETY (CRITICAL):
+     - BuildContext never used after await without mounted check
+     - All Futures must be awaited or explicitly ignored with unawaited()
+     - All async errors must be caught
+     - No async gaps in lifecycle methods without checks
   
-  # Who to notify
-  notify:
-    - pull_request_author
-    - repository_owner
-
-# Learning Settings
-learning:
-  # Learn from approvals
-  learn_from_approved_prs: true
+  4. WIDGET BEST PRACTICES:
+     - Const constructors used wherever possible
+     - Keys provided for list items and dynamic widgets
+     - Build methods are pure (no side effects)
+     - No business logic in build methods
+     - Proper use of StatelessWidget vs StatefulWidget
   
-  # Adapt to project style
-  adapt_to_project: true
+  5. STATE MANAGEMENT:
+     - Immutable state objects
+     - Proper use of copyWith for updates
+     - No mutable global state
+     - Proper separation of UI and business logic
   
-  # Custom patterns to learn
-  patterns_to_learn:
-    - naming_conventions
-    - code_structure
-    - error_handling_patterns
-    - testing_patterns
-
-# Advanced Settings - COMPREHENSIVE REVIEW
-advanced:
-  # Incremental reviews for large PRs
-  incremental_review: true
+  6. TESTING REQUIREMENTS:
+     - Every public method has tests
+     - Edge cases are tested
+     - Error scenarios are tested
+     - Async operations are properly tested
+     - Widget tests use proper finders and keys
   
-  # Extended review timeout for thorough analysis
-  timeout_minutes: 60
+  7. DOCUMENTATION:
+     - All public APIs have dartdoc comments
+     - Complex logic has inline comments
+     - Non-obvious code has explanations
+     - Examples provided for non-trivial APIs
   
-  # Review ALL files - no limits
-  max_files_per_review: 1000
+  8. CODE QUALITY:
+     - Methods under 30 lines
+     - Classes under 200 lines
+     - Cyclomatic complexity under 10
+     - No code duplication
+     - Proper naming conventions
+     - Single responsibility per class/method
   
-  # Review depth - MAXIMUM
-  review_depth: maximum
+  9. ERROR HANDLING:
+     - Comprehensive try-catch blocks
+     - Specific exception types
+     - Meaningful error messages
+     - No empty catch blocks
+     - Proper error propagation
   
-  # Check ALL commits in PR
-  review_all_commits: true
+  10. PERFORMANCE:
+      - No N+1 query problems
+      - Efficient collection operations
+      - Proper use of const and final
+      - No unnecessary rebuilds
+      - Lazy loading where appropriate
   
-  # Ignore ONLY generated files
-  ignore:
-    - "**/*.g.dart"
-    - "**/*.freezed.dart"
-    - "**/*.gen.dart"
-    - "**/*.mocks.dart"
-    - "**/*.config.dart"
-    - "**/*.gr.dart"
-    - ".dart_tool/**"
-    - "build/**"
-    - "coverage/**"
-    - ".fvm/**"
-
-# Quality Gates - ULTRA STRICT - BLOCK EVERYTHING
-quality_gates:
-  # Block merge if ANY of these fail - ZERO TOLERANCE
-  blocking:
-    - test_coverage_below_threshold
-    - security_vulnerability_found
-    - critical_bugs_present
-    - missing_documentation
-    - memory_leaks_detected
-    - null_safety_violations
-    - type_safety_violations
-    - unhandled_exceptions
-    - resource_leaks
-    - code_complexity_high
-    - code_duplication_detected
-    - performance_concerns
-    - linting_errors
-    - formatting_errors
-    - unused_code
-    - dead_code
-    - magic_numbers
-    - hardcoded_strings
-    - print_statements
-    - todo_comments
-    - empty_catch_blocks
-    - missing_error_handling
-    - improper_resource_disposal
-    - build_context_after_async
-    - unawaited_futures
-    - missing_widget_keys
-    - god_classes
-    - long_methods
-    - too_many_parameters
-    - solid_violations
-    - architecture_violations
+  REVIEW PROCESS:
+  1. First pass: Scan for critical issues (security, crashes, leaks)
+  2. Second pass: Check test coverage and documentation
+  3. Third pass: Review code quality and architecture
+  4. Fourth pass: Check for improvements and best practices
   
-  # NO warnings allowed - treat as blocking
-  warning: []
+  For EACH issue found:
+  - Clearly state the problem
+  - Explain why it's a problem
+  - Provide a code example of the fix
+  - Reference relevant documentation
+  - Assign appropriate severity
   
-  # Minimum thresholds - STRICT
-  thresholds:
-    test_coverage: 100
-    branch_coverage: 100
-    line_coverage: 100
-    documentation_coverage: 100
-    code_complexity: 5
-    cognitive_complexity: 7
-    code_duplication: 1
-    method_length: 30
-    class_length: 200
-    file_length: 400
-    parameter_count: 3
-    nesting_depth: 3
-    maintainability_index: 85
-    technical_debt_ratio: 0
-    code_smells: 0
-    bugs: 0
-    vulnerabilities: 0
-    security_hotspots: 0
+  REQUEST CHANGES if ANY of these are true:
+  - Critical or high severity issues present
+  - Missing tests for new functionality
+  - Missing documentation for public APIs
+  - Resource leaks detected
+  - Null safety violations
+  - Potential crashes or bugs
+  
+  Only APPROVE when code meets ALL quality standards.

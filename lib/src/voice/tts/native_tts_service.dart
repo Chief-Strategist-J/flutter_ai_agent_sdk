@@ -64,12 +64,27 @@ class NativeTTSService implements TextToSpeechService {
 
   @override
   Future<void> setVoice(final String voiceId) async {
-    // flutter_tts expects a map like {'name': <voiceName>, 'locale': <locale>}
-    final Map<String, String> voiceSpec = <String, String>{
-      'name': voiceId,
-      'locale': 'en-US',
-    };
-    await _tts.setVoice(voiceSpec);
+    final Object? voicesObj = await _tts.getVoices;
+    if (voicesObj is Iterable<Object?>) {
+      for (final Object? entry in voicesObj) {
+        if (entry is Map<Object?, Object?>) {
+          final String? name = entry['name'] as String?;
+          final String? locale = entry['locale'] as String?;
+          if (name != null && name == voiceId &&
+              locale != null && locale.isNotEmpty) {
+            final Map<String, String> voiceSpec = <String, String>{
+              'name': name,
+              'locale': locale,
+            };
+            await _tts.setVoice(voiceSpec);
+            return;
+          }
+        }
+      }
+    }
+    AgentLogger.warning(
+      'Voice $voiceId not found with a locale; keeping the current voice.',
+    );
   }
 
   @override

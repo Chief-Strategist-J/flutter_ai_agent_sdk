@@ -31,7 +31,10 @@ class TurnDetectionConfig {
     this.silenceThreshold = const Duration(milliseconds: 700),
     this.minSpeechDuration = const Duration(milliseconds: 300),
     this.vadThreshold = 0.5,
-  });
+  }) : assert(
+         vadThreshold >= 0.0 && vadThreshold <= 1.0,
+         'vadThreshold must be between 0.0 and 1.0',
+       );
 
   /// Selected turn detection mode.
   final TurnDetectionMode mode;

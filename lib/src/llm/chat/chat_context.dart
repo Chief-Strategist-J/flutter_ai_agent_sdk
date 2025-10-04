@@ -26,11 +26,18 @@ class ChatContext {
   /// If [limit] is null or larger than the total messages,
   /// all messages are returned.
   List<Message> getMessages({final int? limit}) {
-    if (limit == null || limit >= messages.length) {
+    if (limit == null) {
       return List<Message>.unmodifiable(messages);
     }
+    if (limit <= 0) {
+      return const <Message>[];
+    }
+    if (limit >= messages.length) {
+      return List<Message>.unmodifiable(messages);
+    }
+    final int start = messages.length - limit;
     return List<Message>.unmodifiable(
-      messages.sublist(messages.length - limit),
+      messages.sublist(start),
     );
   }
 

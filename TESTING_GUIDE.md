@@ -60,6 +60,7 @@ This guide ensures 100% code coverage and strict adherence to production-quality
 
 ### 1. Documentation Issues
 All public members must have documentation comments:
+
 ```dart
 /// Manages voice agent sessions and interactions.
 ///
@@ -76,6 +77,7 @@ class VoiceAgent {
 
 ### 2. Type Annotation Issues
 All variables must have explicit types:
+
 ```dart
 // ❌ Bad
 var result = await someFunction();
@@ -86,6 +88,7 @@ final String result = await someFunction();
 
 ### 3. Import Ordering
 Imports must be sorted alphabetically:
+
 ```dart
 // ✅ Correct order
 import 'dart:async';
@@ -98,6 +101,7 @@ import 'package:flutter_ai_agent_sdk/src/core/agents/agent_config.dart';
 
 ### 4. Final Parameters
 All parameters should be final:
+
 ```dart
 // ❌ Bad
 Future<void> processMessage(Message message) async { }
@@ -109,6 +113,7 @@ Future<void> processMessage(final Message message) async { }
 ## Testing Standards
 
 ### Unit Test Structure
+
 ```dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -164,6 +169,7 @@ void main() {
 6. **Resource Cleanup**: Dispose, close, cancel tested
 
 ### Mock Testing Pattern
+
 ```dart
 class MockLLMProvider extends Mock implements LLMProvider {}
 
@@ -200,6 +206,7 @@ void main() {
 ## Running Tests
 
 ### Local Testing
+
 ```bash
 # Run the comprehensive test script
 ./test_local.sh

@@ -228,16 +228,15 @@ As a public open-source project, you get **full access for free**.
 ### 13. Support
 
 Need help?
-- CodeRabbit Docs: https://docs.coderabbit.ai
+- [CodeRabbit Docs](https://docs.coderabbit.ai)
 - GitHub Issues: Report bugs/feature requests
 - Community: Join CodeRabbit Discord
-- Email: support@coderabbit.ai
+- Email: [support@coderabbit.ai](mailto:support@coderabbit.ai)
 
 ## Summary
-
-1. ✅ Install CodeRabbit GitHub App
-2. ✅ Configuration already in `.coderabbit.yaml`
-3. ✅ CI/CD integration automatic
+{{ ... }}
+1. Install CodeRabbit GitHub App
+2. Configuration already in `.coderabbit.yaml`
 4. ✅ Create PR to test
 5. ✅ Enjoy automated deep code reviews!
 

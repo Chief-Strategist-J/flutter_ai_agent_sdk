@@ -63,7 +63,19 @@ class VoiceAgent {
   /// reference.
   Future<void> closeSession() async {
     await _session?.stop();
-    _session?.dispose();
+    await _session?.dispose();
+    _session = null;
+  }
+
+  /// Synchronously disposes of the active session.
+  ///
+  /// For use in synchronous contexts like Flutter's dispose() method.
+  /// Note: This method does not wait for async cleanup operations to complete.
+  /// Use [closeSession()] for async contexts where you need to ensure cleanup
+  /// completes.
+  void dispose() {
+    unawaited(_session?.stop());
+    unawaited(_session?.dispose());
     _session = null;
   }
 

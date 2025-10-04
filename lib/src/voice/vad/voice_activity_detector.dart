@@ -15,7 +15,11 @@ class VADResult {
     required this.isSpeech,
     required this.confidence,
     final DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.now();
+  })  : assert(
+          confidence >= 0.0 && confidence <= 1.0,
+          'confidence must be between 0.0 and 1.0',
+        ),
+        timestamp = timestamp ?? DateTime.now();
 
   /// Whether speech was detected.
   final bool isSpeech;

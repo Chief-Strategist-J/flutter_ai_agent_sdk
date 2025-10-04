@@ -4,7 +4,19 @@ import 'package:flutter_ai_agent_sdk/src/tools/tool.dart';
 import 'package:flutter_ai_agent_sdk/src/voice/stt/speech_recognition_service.dart';
 import 'package:flutter_ai_agent_sdk/src/voice/tts/text_to_speech_service.dart';
 
-/// Defines configuration options for an AI Agent.
+/// Configuration for an AI agent instance.
+///
+/// Defines the behavior, capabilities, and services available to an agent,
+/// including LLM provider, speech services, tools, and memory settings.
+///
+/// Example:
+/// ```dart
+/// final config = AgentConfig(
+///   name: 'My Assistant',
+///   llmProvider: OpenAIProvider(apiKey: 'key'),
+///   tools: [weatherTool],
+/// );
+/// ```
 ///
 /// Provides model provider, speech services, tool integration,
 /// memory behavior, and metadata. Immutable.
@@ -20,8 +32,8 @@ class AgentConfig {
   /// - [enableMemory]: true
   const AgentConfig({
     required this.name,
-    this.instructions,
     required this.llmProvider,
+    this.instructions,
     this.sttService,
     this.ttsService,
     this.turnDetection = const TurnDetectionConfig(),

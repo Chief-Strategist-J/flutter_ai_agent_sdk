@@ -177,10 +177,19 @@ class AgentSession {
       _updateState(SessionState.listening);
       _emitEvent(UserSpeechStartedEvent());
 
-      final String transcript = await config.sttService!.startListening();
-      if (transcript.isNotEmpty) {
-        _emitEvent(UserSpeechEndedEvent(transcript));
-        await sendMessage(transcript);
+      // Start listening (returns void, transcript comes via stream)
+      await config.sttService!.startListening();
+
+      // Listen for the final transcript from the stream
+      final Stream<String> transcriptStream =
+          config.sttService!.transcriptStream;
+      await for (final String transcript in transcriptStream) {
+        // The last transcript received is the final one
+        if (transcript.isNotEmpty) {
+          _emitEvent(UserSpeechEndedEvent(transcript));
+          await sendMessage(transcript);
+          break; // Exit after processing the final transcript
+        }
       }
     } catch (e, stack) {
       _handleError('Failed to listen', e, stack);
@@ -300,13 +309,14 @@ class AgentSession {
   }
 
   /// Disposes controllers and releases resources.
-  void dispose() {
-    unawaited(
-      Future.wait(<Future<void>>[
-        _eventController.close(),
-        _stateController.close(),
-        _messagesController.close(),
-      ]),
-    );
+  ///
+  /// Ensures all controllers are properly closed before releasing resources.
+  /// This method is async to allow proper error handling during cleanup.
+  Future<void> dispose() async {
+    await Future.wait(<Future<void>>[
+      _eventController.close(),
+      _stateController.close(),
+      _messagesController.close(),
+    ]);
   }
 }
