@@ -211,8 +211,17 @@ MIT License
 
 Contributions welcome! Please read CONTRIBUTING.md first.
 
+## 🔗 Important Links
+
+- **Email**: [chief.stategist.j@gmail.com](mailto:chief.stategist.j@gmail.com)
+- **Phone**: [+91 9664920749](tel:+919664920749)
+- **Medium**: [scaibu](https://medium.com/@scaibu)
+- **LinkedIn**: [Chief J](https://www.linkedin.com/in/chiefj/)
+- **Twitter/X**: [ChiefErj](https://x.com/ChiefErj)
+- **Instagram**: [chief._.jaydeep](https://www.instagram.com/chief._.jaydeep/)
+
 ## 📞 Support
 
-- Documentation: [link]
-- Issues: [GitHub Issues]
-- Discord: [link]
+- **Documentation**: [Project Wiki](https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk/wiki)
+- **Issues**: [GitHub Issues](https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Chief-Strategist-J/flutter_ai_agent_sdk/discussions)
