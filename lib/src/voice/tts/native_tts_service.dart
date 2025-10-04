@@ -1,11 +1,17 @@
 import 'dart:async';
+
+import 'package:flutter_ai_agent_sdk/src/utils/logger.dart';
+import 'package:flutter_ai_agent_sdk/src/voice/tts/text_to_speech_service.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import 'package:flutter_ai_agent_sdk/src/voice/tts/text_to_speech_service.dart';
-import 'package:flutter_ai_agent_sdk/src/utils/logger.dart';
-
+/// Native implementation of [TextToSpeechService].
+///
+/// Uses the `flutter_tts` plugin to provide text-to-speech
+/// capabilities with configurable voice, rate, and pitch.
 class NativeTTSService implements TextToSpeechService {
+  /// Underlying TTS engine.
   final FlutterTts _tts = FlutterTts();
+
   bool _isSpeaking = false;
 
   @override
@@ -18,18 +24,17 @@ class NativeTTSService implements TextToSpeechService {
       await _tts.setSpeechRate(0.5);
       await _tts.setPitch(1);
 
-      _tts.setStartHandler(() {
-        _isSpeaking = true;
-      });
-
-      _tts.setCompletionHandler(() {
-        _isSpeaking = false;
-      });
-
-      _tts.setErrorHandler((final msg) {
-        _isSpeaking = false;
-        AgentLogger.error('TTS Error', msg, null);
-      });
+      _tts
+        ..setStartHandler(() {
+          _isSpeaking = true;
+        })
+        ..setCompletionHandler(() {
+          _isSpeaking = false;
+        })
+        ..setErrorHandler((final dynamic msg) {
+          _isSpeaking = false;
+          AgentLogger.error('TTS Error', msg, null);
+        });
 
       AgentLogger.info('TTS initialized successfully');
     } catch (e, stack) {
@@ -50,13 +55,21 @@ class NativeTTSService implements TextToSpeechService {
 
   @override
   Future<void> stop() async {
-    await _tts.stop();
-    _isSpeaking = false;
+    try {
+      await _tts.stop();
+    } finally {
+      _isSpeaking = false;
+    }
   }
 
   @override
   Future<void> setVoice(final String voiceId) async {
-    await _tts.setVoice(<String, String>{'name': voiceId, 'locale': 'en-US'});
+    // flutter_tts expects a map like {'name': <voiceName>, 'locale': <locale>}
+    final Map<String, String> voiceSpec = <String, String>{
+      'name': voiceId,
+      'locale': 'en-US',
+    };
+    await _tts.setVoice(voiceSpec);
   }
 
   @override
@@ -71,8 +84,32 @@ class NativeTTSService implements TextToSpeechService {
 
   @override
   Future<List<String>> getAvailableVoices() async {
-    final voices = await _tts.getVoices;
-    return (voices as List).map((final v) => v['name'] as String).toList();
+    // flutter_tts returns Future<dynamic>; cast defensively.
+    final Object? voicesObj = await _tts.getVoices;
+
+    if (voicesObj is! List<dynamic>) {
+      // Unexpected shape; return empty list rather than throwing.
+      AgentLogger.warning('TTS getVoices returned non-list payload');
+      return const <String>[];
+    }
+
+    final List<String> names = <String>[];
+    for (final Object? v in voicesObj) {
+      if (v is Map<Object?, Object?>) {
+        final Object? nameObj = v['name'];
+        if (nameObj is String && nameObj.isNotEmpty) {
+          names.add(nameObj);
+        }
+      } else if (v is Map<String, Object?>) {
+        final Object? nameObj = v['name'];
+        if (nameObj is String && nameObj.isNotEmpty) {
+          names.add(nameObj);
+        }
+      }
+      // If an entry is any other shape, skip it silently.
+    }
+
+    return names;
   }
 
   @override

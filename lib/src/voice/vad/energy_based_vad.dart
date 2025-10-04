@@ -1,20 +1,39 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:rxdart/rxdart.dart';
 
 import 'package:flutter_ai_agent_sdk/src/voice/vad/voice_activity_detector.dart';
+import 'package:rxdart/rxdart.dart';
 
+/// A simple energy-based implementation of
+/// [VoiceActivityDetector].
+///
+/// Uses short-term energy of audio frames to estimate
+/// whether speech is present. Applies smoothing over
+/// recent frames to reduce false positives.
 class EnergyBasedVAD implements VoiceActivityDetector {
+  /// Creates an [EnergyBasedVAD].
+  ///
+  /// - [threshold]: Minimum energy for detecting speech.
+  ///   Defaults to `0.02`.
+  /// - [smoothingWindow]: Number of frames used for
+  ///   smoothing. Defaults to `3`.
   EnergyBasedVAD({
     this.threshold = 0.02,
     this.smoothingWindow = 3,
   });
+
+  /// Energy threshold for speech detection.
   final double threshold;
+
+  /// Number of frames to smooth over.
   final int smoothingWindow;
 
+  /// Internal controller for activity results.
   final BehaviorSubject<VADResult> _activityController =
       BehaviorSubject<VADResult>();
+
+  /// History of recent energy values.
   final List<double> _energyHistory = <double>[];
 
   @override
@@ -22,7 +41,7 @@ class EnergyBasedVAD implements VoiceActivityDetector {
 
   @override
   Future<void> initialize() async {
-    // No initialization needed for energy-based VAD
+    // No initialization required for energy-based VAD.
   }
 
   @override
@@ -50,6 +69,7 @@ class EnergyBasedVAD implements VoiceActivityDetector {
     return result;
   }
 
+  /// Calculates short-term RMS energy of [audioData].
   double _calculateEnergy(final Float32List audioData) {
     double sum = 0;
     for (final double sample in audioData) {

@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_ai_agent_sdk/flutter_ai_agent_sdk.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('SessionStatus', () {

@@ -1,20 +1,34 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:uuid/uuid.dart';
 
-import 'package:flutter_ai_agent_sdk/src/llm/providers/llm_provider.dart';
 import 'package:flutter_ai_agent_sdk/src/core/models/message.dart';
+import 'package:flutter_ai_agent_sdk/src/llm/providers/llm_provider.dart';
 import 'package:flutter_ai_agent_sdk/src/tools/tool.dart';
 import 'package:flutter_ai_agent_sdk/src/utils/logger.dart';
+import 'package:http/http.dart' as http;
 
+/// LLM provider for Anthropic Claude models.
+///
+/// Supports both single response generation via [generate]
+/// and streaming responses via [generateStream].
 class AnthropicProvider extends LLMProvider {
+  /// Creates an [AnthropicProvider].
+  ///
+  /// - [apiKey]: Required Anthropic API key.
+  /// - [model]: Defaults to `claude-3-sonnet-20240229`.
+  /// - [baseUrl]: Defaults to `https://api.anthropic.com/v1`.
   AnthropicProvider({
     required this.apiKey,
     this.model = 'claude-3-sonnet-20240229',
     this.baseUrl = 'https://api.anthropic.com/v1',
   });
+
+  /// Anthropic API key.
   final String apiKey;
+
+  /// Model identifier to use.
   final String model;
+
+  /// Base URL for Anthropic API requests.
   final String baseUrl;
 
   @override
@@ -45,8 +59,8 @@ class AnthropicProvider extends LLMProvider {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return _parseResponse(data);
+        final dynamic data = jsonDecode(response.body);
+        return _parseResponse(data as Map<String, dynamic>);
       } else {
         throw Exception('Anthropic API error: ${response.statusCode}');
       }
@@ -74,15 +88,33 @@ class AnthropicProvider extends LLMProvider {
         'Content-Type': 'application/json',
       });
 
-      request.body = jsonEncode(<String, dynamic>{
+      // Build a strictly-typed JSON body.
+      final Map<String, Object?> body = <String, Object?>{
         'model': model,
-        'messages': messages.map(_messageToJson).toList(),
-        'max_tokens': parameters?['max_tokens'] ?? 4096,
+        'messages': messages
+            .map((final Message m) => _messageToJson(m) as Map<String, Object?>)
+            .toList(growable: false),
+        'max_tokens': (parameters?['max_tokens'] as int?) ?? 4096,
         'stream': true,
-        if (tools != null && tools.isNotEmpty)
-          'tools': tools.map(_toolToAnthropicFormat).toList(),
-        ...?parameters,
-      });
+      };
+
+      if (tools != null && tools.isNotEmpty) {
+        body['tools'] = tools
+            .map((final Tool t) =>
+                _toolToAnthropicFormat(t) as Map<String, Object?>)
+            .toList(growable: false);
+      }
+
+      if (parameters != null && parameters.isNotEmpty) {
+        // Safely widen Map<String, dynamic> -> Map<String, Object?> for addAll.
+        body.addAll(
+          parameters.map<String, Object?>(
+            MapEntry<String, Object?>.new,
+          ),
+        );
+      }
+
+      request.body = jsonEncode(body);
 
       final http.StreamedResponse streamedResponse = await request.send();
       final StringBuffer buffer = StringBuffer();
@@ -94,16 +126,26 @@ class AnthropicProvider extends LLMProvider {
           if (line.startsWith('data: ')) {
             final String jsonStr = line.substring(6);
             try {
-              final data = jsonDecode(jsonStr);
-              if (data['type'] == 'content_block_delta') {
-                final delta = data['delta'];
-                if (delta['type'] == 'text_delta') {
-                  final text = delta['text'];
-                  buffer.write(text);
-                  yield LLMResponse(content: text);
+              final Object? decoded = jsonDecode(jsonStr);
+
+              if (decoded is Map<String, dynamic>) {
+                final String? type = decoded['type'] as String?;
+                if (type == 'content_block_delta') {
+                  final Object? deltaObj = decoded['delta'];
+                  if (deltaObj is Map<String, dynamic>) {
+                    final String? deltaType = deltaObj['type'] as String?;
+                    if (deltaType == 'text_delta') {
+                      final String? text = deltaObj['text'] as String?;
+                      if (text != null) {
+                        buffer.write(text);
+                        yield LLMResponse(content: text);
+                      }
+                    }
+                  }
                 }
               }
-            } catch (e) {
+            } catch (_) {
+              // Ignore non-JSON lines like [DONE] or partial frames.
               continue;
             }
           }
@@ -115,30 +157,36 @@ class AnthropicProvider extends LLMProvider {
     }
   }
 
-  Map<String, dynamic> _messageToJson(final Message message) => {
+  /// Converts a [Message] to Anthropic API format.
+  Map<String, dynamic> _messageToJson(final Message message) =>
+      <String, dynamic>{
         'role': message.role == MessageRole.assistant ? 'assistant' : 'user',
         'content': message.content,
       };
 
-  Map<String, dynamic> _toolToAnthropicFormat(final Tool tool) => {
+  /// Converts a [Tool] to Anthropic API format.
+  Map<String, dynamic> _toolToAnthropicFormat(final Tool tool) =>
+      <String, dynamic>{
         'name': tool.name,
         'description': tool.description,
         'input_schema': tool.parameters,
       };
 
   LLMResponse _parseResponse(final Map<String, dynamic> data) {
-    final content = data['content'];
+    final Object? content = data['content'];
     String? textContent;
 
     if (content is List && content.isNotEmpty) {
-      final firstBlock = content[0];
-      if (firstBlock['type'] == 'text') {
-        textContent = firstBlock['text'];
+      final Object? firstBlock = content.first;
+
+      if (firstBlock is Map<String, dynamic>) {
+        final String? type = firstBlock['type'] as String?;
+        if (type == 'text') {
+          textContent = firstBlock['text'] as String?;
+        }
       }
     }
 
-    return LLMResponse(
-      content: textContent,
-    );
+    return LLMResponse(content: textContent);
   }
 }

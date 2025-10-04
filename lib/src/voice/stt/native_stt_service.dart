@@ -1,14 +1,22 @@
 import 'dart:async';
+
+import 'package:flutter_ai_agent_sdk/src/utils/logger.dart';
+import 'package:flutter_ai_agent_sdk/src/voice/stt/speech_recognition_service.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:rxdart/rxdart.dart';
 
-import 'package:flutter_ai_agent_sdk/src/voice/stt/speech_recognition_service.dart';
-import 'package:flutter_ai_agent_sdk/src/utils/logger.dart';
-
+/// Native implementation of [SpeechRecognitionService].
+///
+/// Uses the `speech_to_text` package for on-device
+/// speech-to-text recognition. Provides transcript
+/// streaming and manages listening state.
 class NativeSTTService implements SpeechRecognitionService {
+  /// Internal speech-to-text engine.
   final stt.SpeechToText _speech = stt.SpeechToText();
+
+  /// Controller for streaming transcripts.
   final BehaviorSubject<String> _transcriptController =
       BehaviorSubject<String>();
 

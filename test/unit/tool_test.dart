@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_ai_agent_sdk/flutter_ai_agent_sdk.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('FunctionTool', () {
@@ -28,18 +28,19 @@ void main() {
         },
       );
 
-      final result = await tool.execute(<String, dynamic>{'a': 5, 'b': 3});
+      final dynamic result =
+          await tool.execute(<String, dynamic>{'a': 5, 'b': 3});
       expect(result, 8);
     });
 
-    test('should convert to JSON', () {
+    test('should convert to JSON', () async {
       final FunctionTool tool = FunctionTool(
         name: 'test_tool',
         description: 'A test tool',
         parameters: <String, dynamic>{
           'type': 'object',
-          'properties': <String, Map<String, String>>{
-            'param': <String, String>{'type': 'string'},
+          'properties': <String, dynamic>{
+            'param': <String, dynamic>{'type': 'string'},
           },
         },
         function: (final Map<String, dynamic> args) async => 'result',
@@ -47,10 +48,43 @@ void main() {
 
       final Map<String, dynamic> json = tool.toJson();
 
-      expect(json['type'], 'function');
-      expect(json['function']['name'], 'test_tool');
-      expect(json['function']['description'], 'A test tool');
-      expect(json['function']['parameters'], isNotNull);
+      // Top-level
+      expect(json['type'], equals('function'));
+
+      // function block
+      final Object? functionObj = json['function'];
+      if (functionObj is! Map<String, dynamic>) {
+        fail('`function` must be a Map<String, dynamic>');
+      }
+      final Map<String, dynamic> functionMap = functionObj;
+
+      expect(functionMap['name'], equals('test_tool'));
+      expect(functionMap['description'], equals('A test tool'));
+
+      // parameters
+      final Object? paramsObj = functionMap['parameters'];
+      if (paramsObj is! Map<String, dynamic>) {
+        fail('`parameters` must be a Map<String, dynamic>');
+      }
+      final Map<String, dynamic> params = paramsObj;
+
+      expect(params['type'], equals('object'));
+
+      // properties
+      final Object? propsObj = params['properties'];
+      if (propsObj is! Map<String, dynamic>) {
+        fail('`properties` must be a Map<String, dynamic>');
+      }
+      final Map<String, dynamic> properties = propsObj;
+
+      // param schema
+      final Object? paramSchemaObj = properties['param'];
+      if (paramSchemaObj is! Map<String, dynamic>) {
+        fail('`properties.param` must be a Map<String, dynamic>');
+      }
+      final Map<String, dynamic> paramSchema = paramSchemaObj;
+
+      expect(paramSchema['type'], equals('string'));
     });
   });
 
@@ -75,15 +109,18 @@ void main() {
         name: 'greet',
         description: 'Greet someone',
         parameters: <String, dynamic>{},
-        function: (final Map<String, dynamic> args) async =>
-            'Hello, ${args['name']}!',
+        function: (final Map<String, dynamic> args) async {
+          final String name = args['name'] as String; // explicit cast
+          return 'Hello, $name!';
+        },
       );
 
       final ToolExecutor executor = ToolExecutor(tools: <Tool>[tool]);
-      final result =
+
+      final Object? result =
           await executor.execute('greet', <String, dynamic>{'name': 'Alice'});
 
-      expect(result, 'Hello, Alice!');
+      expect(result, equals('Hello, Alice!'));
     });
 
     test('should throw error for missing tool', () async {

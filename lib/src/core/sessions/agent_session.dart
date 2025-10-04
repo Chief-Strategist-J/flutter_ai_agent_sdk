@@ -1,29 +1,50 @@
 import 'dart:async';
-import 'package:flutter_ai_agent_sdk/src/llm/providers/llm_provider.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:uuid/uuid.dart';
 
 import 'package:flutter_ai_agent_sdk/src/core/agents/agent_config.dart';
 import 'package:flutter_ai_agent_sdk/src/core/events/agent_events.dart';
 import 'package:flutter_ai_agent_sdk/src/core/models/message.dart';
 import 'package:flutter_ai_agent_sdk/src/core/sessions/session_state.dart';
+import 'package:flutter_ai_agent_sdk/src/llm/providers/llm_provider.dart';
 import 'package:flutter_ai_agent_sdk/src/memory/conversation_memory.dart';
 import 'package:flutter_ai_agent_sdk/src/tools/tool_executor.dart';
 import 'package:flutter_ai_agent_sdk/src/utils/logger.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:uuid/uuid.dart';
 
+/// Represents a live agent session.
+///
+/// An [AgentSession] manages lifecycle, events, state,
+/// and messages for an AI agent. It handles sending user
+/// input, streaming LLM responses, executing tools, and
+/// coordinating STT/TTS services.
 class AgentSession {
+  /// Creates a new [AgentSession].
+  ///
+  /// - [id] is auto-generated if not provided.
+  /// - [memory] defaults to a [ConversationMemory] with
+  ///   [config].
+  /// - [toolExecutor] defaults to [ToolExecutor] using
+  ///   [config].
   AgentSession({
-    String? id,
     required this.config,
-    ConversationMemory? memory,
-    ToolExecutor? toolExecutor,
+    final String? id,
+    final ConversationMemory? memory,
+    final ToolExecutor? toolExecutor,
   })  : id = id ?? const Uuid().v4(),
         memory = memory ??
             ConversationMemory(maxMessages: config.maxHistoryMessages),
         toolExecutor = toolExecutor ?? ToolExecutor(tools: config.tools);
+
+  /// Unique identifier for this session.
   final String id;
+
+  /// Configuration used by this agent.
   final AgentConfig config;
+
+  /// Conversation memory for storing messages.
   final ConversationMemory memory;
+
+  /// Executes tool calls triggered by the LLM.
   final ToolExecutor toolExecutor;
 
   final BehaviorSubject<AgentEvent> _eventController =
@@ -35,30 +56,41 @@ class AgentSession {
   final BehaviorSubject<List<Message>> _messagesController =
       BehaviorSubject<List<Message>>.seeded(<Message>[]);
 
+  /// Stream of agent events such as messages, speech,
+  /// tool calls, and errors.
   Stream<AgentEvent> get events => _eventController.stream;
+
+  /// Stream of session status changes.
   Stream<SessionStatus> get state => _stateController.stream;
+
+  /// Stream of conversation messages.
   Stream<List<Message>> get messages => _messagesController.stream;
 
+  /// Current session status.
   SessionStatus get currentState => _stateController.value;
+
+  /// Current list of conversation messages.
   List<Message> get currentMessages => _messagesController.value;
 
   bool _isActive = false;
-  StreamSubscription? _sttSubscription;
+  StreamSubscription<LLMResponse>? _sttSubscription;
 
+  /// Starts the session and initializes services.
+  ///
+  /// Emits [AgentStartedEvent]. Initializes STT and TTS
+  /// services if configured.
   Future<void> start() async {
-    if (_isActive) return;
-
+    if (_isActive) {
+      return;
+    }
     try {
       _isActive = true;
       _updateState(SessionState.idle);
       _emitEvent(AgentStartedEvent());
 
-      // Initialize STT if available
       if (config.sttService != null) {
         await config.sttService!.initialize();
       }
-
-      // Initialize TTS if available
       if (config.ttsService != null) {
         await config.ttsService!.initialize();
       }
@@ -69,9 +101,14 @@ class AgentSession {
     }
   }
 
+  /// Stops the session and disposes services.
+  ///
+  /// Emits [AgentStoppedEvent]. Cancels STT listening and
+  /// disposes STT/TTS services.
   Future<void> stop() async {
-    if (!_isActive) return;
-
+    if (!_isActive) {
+      return;
+    }
     try {
       _isActive = false;
       await _sttSubscription?.cancel();
@@ -87,15 +124,18 @@ class AgentSession {
     }
   }
 
+  /// Sends a user text message to the agent.
+  ///
+  /// Creates a [Message] from user input, streams LLM
+  /// responses, executes tool calls if any, and emits
+  /// events for messages and speech.
   Future<void> sendMessage(final String text) async {
     if (!_isActive) {
       throw StateError('Session is not active');
     }
-
     try {
       _updateState(SessionState.processing);
 
-      // Create user message
       final Message userMessage = Message(
         id: const Uuid().v4(),
         role: MessageRole.user,
@@ -106,19 +146,15 @@ class AgentSession {
       _addMessage(userMessage);
       _emitEvent(MessageSentEvent(userMessage));
 
-      // Get LLM response
       final Message response = await _getLLMResponse();
 
-      // Handle tool calls if any
       if (response.toolCalls != null && response.toolCalls!.isNotEmpty) {
         await _executeToolCalls(response.toolCalls!);
       }
 
-      // Add assistant message
       _addMessage(response);
       _emitEvent(MessageReceivedEvent(response));
 
-      // Speak response if TTS enabled
       if (config.ttsService != null && response.content.isNotEmpty) {
         await _speakResponse(response.content);
       }
@@ -129,17 +165,19 @@ class AgentSession {
     }
   }
 
+  /// Starts listening for user speech input via STT.
+  ///
+  /// Emits [UserSpeechStartedEvent] and [UserSpeechEndedEvent].
+  /// Automatically sends the transcript as a message.
   Future<void> startListening() async {
     if (config.sttService == null) {
       throw StateError('STT service not configured');
     }
-
     try {
       _updateState(SessionState.listening);
       _emitEvent(UserSpeechStartedEvent());
 
       final String transcript = await config.sttService!.startListening();
-
       if (transcript.isNotEmpty) {
         _emitEvent(UserSpeechEndedEvent(transcript));
         await sendMessage(transcript);
@@ -149,10 +187,12 @@ class AgentSession {
     }
   }
 
+  /// Stops listening for speech input if STT is active.
   Future<void> stopListening() async {
     await config.sttService?.stopListening();
   }
 
+  /// Generates a response from the LLM and streams content.
   Future<Message> _getLLMResponse() async {
     final List<Message> context = memory.getContext();
     final Stream<LLMResponse> stream = config.llmProvider.generateStream(
@@ -168,7 +208,6 @@ class AgentSession {
         buffer.write(chunk.content);
         _emitEvent(StreamingTextEvent(chunk.content!));
       }
-
       if (chunk.toolCalls != null) {
         toolCalls = chunk.toolCalls;
       }
@@ -185,19 +224,21 @@ class AgentSession {
     );
   }
 
+  /// Executes tool calls returned by the LLM.
+  ///
+  /// Emits [ToolCallStartedEvent] and [ToolCallCompletedEvent].
   Future<void> _executeToolCalls(final List<ToolCall> toolCalls) async {
     for (final ToolCall toolCall in toolCalls) {
       try {
         _emitEvent(ToolCallStartedEvent(toolCall.name, toolCall.arguments));
 
-        final result = await toolExecutor.execute(
+        final dynamic result = await toolExecutor.execute(
           toolCall.name,
           toolCall.arguments,
         );
 
         _emitEvent(ToolCallCompletedEvent(toolCall.name, result));
 
-        // Add tool result to memory
         final Message toolMessage = Message(
           id: const Uuid().v4(),
           role: MessageRole.tool,
@@ -213,9 +254,13 @@ class AgentSession {
     }
   }
 
+  /// Speaks the response text if TTS is configured.
+  ///
+  /// Emits [AgentSpeechStartedEvent] and [AgentSpeechEndedEvent].
   Future<void> _speakResponse(final String text) async {
-    if (config.ttsService == null) return;
-
+    if (config.ttsService == null) {
+      return;
+    }
     try {
       _updateState(SessionState.speaking);
       _emitEvent(AgentSpeechStartedEvent());
@@ -236,10 +281,7 @@ class AgentSession {
 
   void _updateState(final SessionState state, {final String? error}) {
     _stateController.add(
-      SessionStatus(
-        state: state,
-        errorMessage: error,
-      ),
+      SessionStatus(state: state, errorMessage: error),
     );
   }
 
@@ -248,15 +290,23 @@ class AgentSession {
   }
 
   void _handleError(
-      final String message, final Object error, final StackTrace stack) {
+    final String message,
+    final Object error,
+    final StackTrace stack,
+  ) {
     AgentLogger.error(message, error, stack);
     _updateState(SessionState.error, error: error.toString());
     _emitEvent(ErrorEvent(error.toString(), stack));
   }
 
+  /// Disposes controllers and releases resources.
   void dispose() {
-    _eventController.close();
-    _stateController.close();
-    _messagesController.close();
+    unawaited(
+      Future.wait(<Future<void>>[
+        _eventController.close(),
+        _stateController.close(),
+        _messagesController.close(),
+      ]),
+    );
   }
 }

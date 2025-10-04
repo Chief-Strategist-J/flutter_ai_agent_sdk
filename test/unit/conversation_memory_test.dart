@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_ai_agent_sdk/flutter_ai_agent_sdk.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('ConversationMemory', () {
@@ -45,16 +45,15 @@ void main() {
     });
 
     test('should clear messages', () {
-      final ConversationMemory memory = ConversationMemory();
-
-      memory.addMessage(
-        Message(
-          id: 'test-id',
-          role: MessageRole.user,
-          type: MessageType.text,
-          content: 'Test',
-        ),
-      );
+      final ConversationMemory memory = ConversationMemory()
+        ..addMessage(
+          Message(
+            id: 'test-id',
+            role: MessageRole.user,
+            type: MessageType.text,
+            content: 'Test',
+          ),
+        );
 
       expect(memory.messageCount, 1);
 
