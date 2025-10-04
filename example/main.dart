@@ -70,7 +70,7 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
             return <String, dynamic>{
               'temperature': 72,
               'condition': 'sunny',
-              'location': location
+              'location': location,
             };
           },
         ),
@@ -92,14 +92,17 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
     // Listen to messages
     _session!.messages.listen((final List<Message> messages) {
       setState(() {
-        _messages..clear()
-        ..addAll(messages);
+        _messages
+          ..clear()
+          ..addAll(messages);
       });
     });
   }
 
   Future<void> _sendMessage(final String text) async {
-    if (_session == null) return;
+    if (_session == null) {
+      return;
+    }
     await _session!.sendMessage(text);
   }
 
@@ -110,19 +113,21 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
         body: Column(
-          children: [
+          children: <Widget>[
             // Status indicator
             Container(
               padding: const EdgeInsets.all(8),
               color: _getStatusColor(),
               child: Row(
-                children: [
+                children: <Widget>[
                   Icon(_getStatusIcon(), color: Colors.white),
                   const SizedBox(width: 8),
                   Text(
                     _status.state.name.toUpperCase(),
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -158,7 +163,7 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
-                children: [
+                children: <Widget>[
                   Expanded(
                     child: TextField(
                       decoration: const InputDecoration(
@@ -216,7 +221,7 @@ class _AgentDemoPageState extends State<AgentDemoPage> {
 
   @override
   void dispose() {
-    _agent.closeSession();
+    unawaited(_agent.closeSession());
     super.dispose();
   }
 }

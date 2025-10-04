@@ -1,8 +1,8 @@
 import 'package:flutter_ai_agent_sdk/src/core/models/turn_detection.dart';
 import 'package:flutter_ai_agent_sdk/src/llm/providers/llm_provider.dart';
+import 'package:flutter_ai_agent_sdk/src/tools/tool.dart';
 import 'package:flutter_ai_agent_sdk/src/voice/stt/speech_recognition_service.dart';
 import 'package:flutter_ai_agent_sdk/src/voice/tts/text_to_speech_service.dart';
-import 'package:flutter_ai_agent_sdk/src/tools/tool.dart';
 
 class AgentConfig {
   const AgentConfig({
